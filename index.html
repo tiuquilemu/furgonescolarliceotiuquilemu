@@ -3,56 +3,109 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Monitoreo Furgón Escolar</title>
+  <title>Monitoreo Furgón - Liceo Tiuquilemu</title>
   <style>
     body { font-family: system-ui, -apple-system, sans-serif; margin: 0; padding: 16px; background-color: #f4f4f9; color: #333; }
     .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); max-width: 480px; margin: 0 auto 16px; }
-    h2 { margin-top: 0; color: #1a73e8; }
+    h2 { margin-top: 0; color: #1a73e8; font-size: 20px; }
+    label { font-weight: bold; font-size: 14px; display: block; margin-bottom: 6px; }
+    select { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ccc; font-size: 15px; background: #fff; margin-bottom: 16px; }
     button { width: 100%; padding: 14px; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px; }
     .btn-start { background-color: #34a853; color: white; }
     .btn-stop { background-color: #ea4335; color: white; }
     .btn-switch { background-color: #f1f3f4; color: #333; border: 1px solid #ccc; margin-bottom: 16px; }
     .status-box { padding: 12px; border-radius: 8px; background-color: #e8f0fe; color: #1967d2; font-weight: 500; margin-top: 12px; }
-    .banner { background-color: #fef7e0; color: #b06000; padding: 10px; border-radius: 8px; font-size: 14px; margin-bottom: 12px; }
+    .route-detail { background-color: #f8f9fa; border-left: 4px solid #1a73e8; padding: 10px; font-size: 13px; color: #555; margin-bottom: 12px; }
+    .banner { background-color: #fef7e0; color: #b06000; padding: 10px; border-radius: 8px; font-size: 13px; margin-bottom: 12px; }
     .hidden { display: none; }
   </style>
 </head>
 <body>
 
-  <!-- Switch de Rol -->
+  <!-- Selección de Rol -->
   <div style="max-width: 480px; margin: 0 auto;">
-    <button class="btn-switch" onclick="toggleRole()">Cambiar Vista (Conductor / Apoderado)</button>
+    <button class="btn-switch" onclick="toggleRole()">Modo: <span id="roleName">Conductor</span> (Cambiar)</button>
   </div>
 
   <!-- Vista Conductor -->
   <div id="driverView" class="card">
-    <h2>Vista Conductor</h2>
-    <div class="banner">💡 Mantén la pantalla activa durante el recorrido para evitar que el GPS se detenga.</div>
-    <p>Estado del permiso GPS: <strong id="gpsPermission">Sin solicitar</strong></p>
-    <div id="driverStatus" class="status-box">Recorrido detenido</div>
+    <h2>🚌 Vista Conductor</h2>
+    
+    <label for="driverRouteSelect">Selecciona tu recorrido:</label>
+    <select id="driverRouteSelect" onchange="updateRouteInfo('driver')">
+      <option value="4">Recorrido N° 4 - San José Zemita / El Carbón</option>
+      <option value="5">Recorrido N° 5 - Chacay Bajo / Ñiquén Estación</option>
+      <option value="6">Recorrido N° 6 - Agua Buena / Buli / Tiuquilemu</option>
+      <option value="7">Recorrido N° 7 - Paque Norte / Bucalemu / Virguín</option>
+      <option value="8">Recorrido N° 8 - La Gloria Arriba / Bajo El León</option>
+      <option value="9">Recorrido N° 9 - La Pitrilla / San Vicente / Chacay</option>
+      <option value="10">Recorrido N° 10 - Maitenes / Santa Josefina</option>
+    </select>
+
+    <div id="driverRouteDetail" class="route-detail">
+      <strong>Ruta:</strong> San Jose Zemita, Zemita, El Carbón, San Fernando, Callejón La Esperanza a Liceo.
+    </div>
+
+    <div class="banner">💡 Mantén la pantalla activa durante el recorrido para evitar interrupciones en la transmisión GPS.</div>
+    <p style="font-size: 14px;">Permiso GPS: <strong id="gpsPermission">Pendiente</strong></p>
+    <div id="driverStatus" class="status-box">Recorrido no iniciado</div>
     <button id="toggleRouteBtn" class="btn-start" onclick="toggleRoute()">Iniciar Recorrido</button>
   </div>
 
   <!-- Vista Apoderado -->
   <div id="parentView" class="card hidden">
-    <h2>Vista Apoderado</h2>
-    <p>Estado del furgón escolar:</p>
-    <div id="parentStatus" class="status-box">Esperando datos del vehículo...</div>
-    <p style="font-size: 14px; color: #666; margin-top: 16px;">
-      Últimas coordenadas: <br>
+    <h2>📍 Vista Apoderado</h2>
+
+    <label for="parentRouteSelect">Selecciona el recorrido a monitorear:</label>
+    <select id="parentRouteSelect" onchange="updateRouteInfo('parent')">
+      <option value="4">Recorrido N° 4 - San José Zemita / El Carbón</option>
+      <option value="5">Recorrido N° 5 - Chacay Bajo / Ñiquén Estación</option>
+      <option value="6">Recorrido N° 6 - Agua Buena / Buli / Tiuquilemu</option>
+      <option value="7">Recorrido N° 7 - Paque Norte / Bucalemu / Virguín</option>
+      <option value="8">Recorrido N° 8 - La Gloria Arriba / Bajo El León</option>
+      <option value="9">Recorrido N° 9 - La Pitrilla / San Vicente / Chacay</option>
+      <option value="10">Recorrido N° 10 - Maitenes / Santa Josefina</option>
+    </select>
+
+    <div id="parentRouteDetail" class="route-detail">
+      <strong>Ruta:</strong> San Jose Zemita, Zemita, El Carbón, San Fernando, Callejón La Esperanza a Liceo.
+    </div>
+
+    <div id="parentStatus" class="status-box">Consultando ubicación del furgón...</div>
+    <p style="font-size: 13px; color: #666; margin-top: 16px;">
+      Última posición GPS: <br>
       <span id="coords">Lat: --, Lon: --</span>
     </p>
   </div>
 
   <script>
+    const routesData = {
+      "4": "San Jose Zemita, Zemita, El Carbón, San Fernando, Callejón La Esperanza a Liceo.",
+      "5": "Chacay Bajo, Las Rosas, Lo Mellado, El Espinal, Ñiquén Estación, San Pedro de Ñiquén a Liceo.",
+      "6": "Agua Buena, Montecillo, Buli Oriente, Llahuimávida - Camino San Pedro, Buli, Tiuquilemu a Liceo.",
+      "7": "Paque Norte, San Gregorio, Bucalemu, Colvindo, Cabrera, Huenutil Centro, Virguín, Tiuquilemu Arriba a Liceo.",
+      "8": "La Gloria Arriba, Camino Bajo El León, La Gloria Centro, Camino Las Torres, La Gloria Abajo a Liceo.",
+      "9": "La Pitrilla, San Vicente, Chacay, Callejón Los Indios, San Roque, San Jorge a Liceo.",
+      "10": "Maitenes, Maitenes El Yugo, Santa Josefina a Liceo."
+    };
+
     let isTracking = false;
     let watchId = null;
     let currentRole = 'driver';
 
     function toggleRole() {
       currentRole = currentRole === 'driver' ? 'parent' : 'driver';
+      document.getElementById('roleName').innerText = currentRole === 'driver' ? 'Conductor' : 'Apoderado';
       document.getElementById('driverView').classList.toggle('hidden', currentRole !== 'driver');
       document.getElementById('parentView').classList.toggle('hidden', currentRole !== 'parent');
+    }
+
+    function updateRouteInfo(role) {
+      const selectId = role === 'driver' ? 'driverRouteSelect' : 'parentRouteSelect';
+      const detailId = role === 'driver' ? 'driverRouteDetail' : 'parentRouteDetail';
+      const selectedValue = document.getElementById(selectId).value;
+      
+      document.getElementById(detailId).innerHTML = `<strong>Ruta:</strong> ${routesData[selectedValue]}`;
     }
 
     function toggleRoute() {
@@ -65,23 +118,24 @@
 
     function startTracking() {
       if (!('geolocation' in navigator)) {
-        alert('Tu navegador no soporta geolocalización.');
+        alert('Tu dispositivo no soporta geolocalización.');
         return;
       }
 
+      const routeId = document.getElementById('driverRouteSelect').value;
       document.getElementById('gpsPermission').innerText = 'Solicitando...';
 
       watchId = navigator.geolocation.watchPosition(
         (position) => {
           const { latitude, longitude } = position.coords;
           document.getElementById('gpsPermission').innerText = 'Concedido';
-          document.getElementById('driverStatus').innerText = `En ruta: ${latitude.toFixed(4)}, ${longitude.toFixed(4)}`;
-          document.getElementById('parentStatus').innerText = `Furgón en movimiento`;
+          document.getElementById('driverStatus').innerText = `En ruta (Recorrido N°${routeId}): ${latitude.toFixed(4)}, ${longitude.toFixed(4)}`;
+          document.getElementById('parentStatus').innerText = `Furgón Recorrido N°${routeId} en movimiento`;
           document.getElementById('coords').innerText = `Lat: ${latitude}, Lon: ${longitude}`;
         },
         (error) => {
-          document.getElementById('gpsPermission').innerText = 'Denegado / Error';
-          alert('Error al acceder al GPS: ' + error.message);
+          document.getElementById('gpsPermission').innerText = 'Error o denegado';
+          alert('Error al obtener GPS: ' + error.message);
         },
         { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
       );
