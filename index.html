@@ -1,21 +1,20 @@
 ```html
 <!doctype html>
 <html lang="es">
-
 <head>
-
 <meta charset="utf-8">
-
-<meta name="viewport"
-content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 
 <title>Transporte Escolar - Liceo Tiuquilemu</title>
 
-<link
-rel="stylesheet"
+<link rel="stylesheet"
 href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 
 <style>
+
+*{
+box-sizing:border-box;
+}
 
 body{
 margin:0;
@@ -29,6 +28,15 @@ background:#17365d;
 color:white;
 text-align:center;
 padding:18px;
+}
+
+header h1{
+margin:0 0 8px;
+font-size:25px;
+}
+
+header p{
+margin:0;
 }
 
 main{
@@ -48,12 +56,11 @@ box-shadow:0 2px 10px #0001;
 select,
 button{
 width:100%;
-padding:12px;
+padding:13px;
 margin:6px 0;
 border-radius:8px;
 border:1px solid #ccd5e0;
-font-size:15px;
-box-sizing:border-box;
+font-size:16px;
 }
 
 button{
@@ -64,7 +71,7 @@ cursor:pointer;
 }
 
 button:disabled{
-opacity:.55;
+opacity:.5;
 cursor:not-allowed;
 }
 
@@ -101,19 +108,20 @@ border-radius:8px;
 
 .stat b{
 display:block;
-font-size:20px;
+font-size:19px;
 color:#17365d;
 margin-top:5px;
 }
 
 .route{
-padding:9px;
+padding:10px;
 border-left:7px solid #3498db;
 background:#f5f8fc;
 margin:6px 0;
+border-radius:5px;
 }
 
-.stop-item{
+.stop{
 padding:11px;
 margin:7px 0;
 background:#f5f8fc;
@@ -121,7 +129,7 @@ border-left:6px solid #8e44ad;
 border-radius:7px;
 }
 
-.stop-item b{
+.stop b{
 color:#17365d;
 }
 
@@ -146,6 +154,17 @@ border-radius:8px;
 margin-top:10px;
 }
 
+.error{
+background:#fdecec;
+padding:12px;
+border-radius:8px;
+margin-top:10px;
+}
+
+#gpsStatus{
+font-weight:bold;
+}
+
 @media(max-width:700px){
 
 .stats{
@@ -156,21 +175,21 @@ grid-template-columns:repeat(2,1fr);
 height:430px;
 }
 
+header h1{
+font-size:20px;
+}
+
 }
 
 </style>
-
 </head>
 
 
 <body>
 
-
 <header>
 
-<h1>
-🚌 TRANSPORTE ESCOLAR - LICEO TIUQUILEMU
-</h1>
+<h1>🚌 TRANSPORTE ESCOLAR - LICEO TIUQUILEMU</h1>
 
 <p>
 Monitoreo y trazabilidad de recorridos en tiempo real
@@ -181,6 +200,10 @@ Monitoreo y trazabilidad de recorridos en tiempo real
 
 <main>
 
+
+<!-- =====================================================
+     SELECCIÓN
+===================================================== -->
 
 <div class="card">
 
@@ -222,31 +245,34 @@ Recorrido N.º 10
 
 </select>
 
-
 <div id="desc">
 Seleccione un recorrido.
 </div>
 
 
 <button
-class="start"
 id="start"
->
-▶ Iniciar Recorrido
+class="start"
+type="button">
+▶ INICIAR RECORRIDO
 </button>
 
 
 <button
-class="stop"
 id="stop"
-disabled
->
-■ Finalizar Recorrido en Liceo
+class="stop"
+type="button"
+disabled>
+■ FINALIZAR RECORRIDO EN LICEO
 </button>
 
 </div>
 
 
+
+<!-- =====================================================
+     INFORMACIÓN
+===================================================== -->
 
 <div class="card">
 
@@ -276,30 +302,37 @@ Duración
 
 </div>
 
-
-<p id="status">
-Esperando inicio del recorrido.
+<p id="gpsStatus">
+⚪ GPS esperando inicio.
 </p>
 
+<div
+id="status"
+class="info">
+Esperando inicio del recorrido.
+</div>
 
 <div
 id="emailStatus"
 class="info"
-style="display:none"
-></div>
+style="display:none">
+</div>
 
 </div>
 
 
+
+<!-- =====================================================
+     MAPA
+===================================================== -->
 
 <div class="card">
 
 <h2>🗺️ Trayectoria GPS</h2>
 
 <p>
-El sistema registra automáticamente el recorrido y detecta
-las paradas de estudiantes según el orden establecido para
-cada recorrido.
+El mapa muestra la trayectoria real registrada por el GPS.
+Las paradas detectadas aparecerán numeradas.
 </p>
 
 <div id="map"></div>
@@ -308,78 +341,62 @@ cada recorrido.
 
 
 
+<!-- =====================================================
+     PARADAS
+===================================================== -->
+
 <div class="card">
 
-<h2>📍 Paradas de estudiantes detectadas</h2>
+<h2>📍 Paradas de estudiantes</h2>
 
 <div id="stopsList">
-
-Aún no se han detectado paradas.
-
+Aún no se ha iniciado el recorrido.
 </div>
 
 </div>
 
 
+
+<!-- =====================================================
+     RESUMEN
+===================================================== -->
 
 <div
 class="card"
 id="summary"
-style="display:none"
->
+style="display:none">
 
 <h2>✅ Recorrido finalizado</h2>
 
 <div id="result"></div>
 
-
 <button
-class="download"
 id="png"
->
-🖼️ Descargar imagen del recorrido
+class="download"
+type="button">
+🖼️ DESCARGAR IMAGEN DEL RECORRIDO
 </button>
 
-
 <button
-class="download"
 id="pdf"
->
-📄 Descargar PDF
+class="download"
+type="button">
+📄 DESCARGAR PDF
 </button>
 
 </div>
 
 
+
+<!-- =====================================================
+     RECORRIDOS
+===================================================== -->
 
 <div class="card">
 
 <h2>📍 Recorridos oficiales</h2>
 
 <div id="routes"></div>
-
-</div>
-
-
-
-<div class="card">
-
-<h3>⚙️ Sistema automático de paradas</h3>
-
-<div class="warning">
-
-<strong>Funcionamiento:</strong>
-
-El sistema considera una posible parada cuando el vehículo
-permanece prácticamente detenido durante un período
-prolongado.
-
-La parada se asigna automáticamente a la siguiente localidad
-del recorrido.
-
-Las ubicaciones aprendidas quedan guardadas en este dispositivo.
-
-</div>
 
 </div>
 
@@ -392,16 +409,13 @@ Las ubicaciones aprendidas quedan guardadas en este dispositivo.
 src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
 </script>
 
-
 <script
 src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js">
 </script>
 
-
 <script
 src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js">
 </script>
-
 
 <script
 src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js">
@@ -411,19 +425,48 @@ src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js">
 
 <script>
 
-/* =========================================================
+/* =====================================================
    EMAILJS
-========================================================= */
+===================================================== */
+
+const EMAILJS_PUBLIC_KEY =
+'x6fcaIBg1FJ5g6gZt';
+
+const EMAILJS_SERVICE =
+'service_vb2sbz2';
+
+const EMAILJS_TEMPLATE =
+'template_8qplt4g';
+
+
+let emailReady=false;
+
+try{
 
 emailjs.init({
-publicKey:'x6fcaIBg1FJ5g6gZt'
+publicKey:EMAILJS_PUBLIC_KEY
 });
 
+emailReady=true;
+
+console.log(
+'EmailJS iniciado correctamente'
+);
+
+}catch(error){
+
+console.error(
+'Error iniciando EmailJS:',
+error
+);
+
+}
 
 
-/* =========================================================
-   RECORRIDOS
-========================================================= */
+
+/* =====================================================
+   RECORRIDOS OFICIALES
+===================================================== */
 
 const R={
 
@@ -520,106 +563,67 @@ s:[
 
 
 
-/* =========================================================
-   CONFIGURACIÓN
-========================================================= */
+/* =====================================================
+   ELEMENTOS HTML
+===================================================== */
 
-/*
-   Tiempo mínimo detenido antes de considerar una parada.
-   45 segundos reduce falsos positivos por detenciones breves.
-*/
-
-const STOP_DWELL_SECONDS=45;
-
-
-/*
-   Velocidad máxima aproximada para considerar
-   que el vehículo está detenido.
-*/
-
-const STOP_SPEED_KMH=3;
-
-
-/*
-   Distancia mínima que debe avanzar después
-   de una posible parada para confirmarla.
-*/
-
-const CONFIRM_MOVE_METERS=40;
-
-
-/*
-   Distancia para reconocer una parada
-   que ya fue aprendida.
-*/
-
-const LEARNED_STOP_RADIUS=120;
-
-
-
-/* =========================================================
-   ELEMENTOS
-========================================================= */
-
-const routeSelect=
+const routeSelect =
 document.getElementById('route');
 
-const descEl=
+const desc =
 document.getElementById('desc');
 
-const startBtn=
+const startButton =
 document.getElementById('start');
 
-const stopBtn=
+const stopButton =
 document.getElementById('stop');
 
-const kmEl=
+const km =
 document.getElementById('km');
 
-const iniEl=
+const ini =
 document.getElementById('ini');
 
-const finEl=
+const fin =
 document.getElementById('fin');
 
-const durEl=
+const dur =
 document.getElementById('dur');
 
-const statusEl=
+const gpsStatus =
+document.getElementById('gpsStatus');
+
+const status =
 document.getElementById('status');
 
-const emailStatusEl=
+const emailStatus =
 document.getElementById('emailStatus');
 
-const summaryEl=
+const summary =
 document.getElementById('summary');
 
-const resultEl=
+const result =
 document.getElementById('result');
 
-const pngBtn=
-document.getElementById('png');
-
-const pdfBtn=
-document.getElementById('pdf');
-
-const routesEl=
-document.getElementById('routes');
-
-const stopsListEl=
+const stopsList =
 document.getElementById('stopsList');
 
+const routes =
+document.getElementById('routes');
 
 
-/* =========================================================
+
+/* =====================================================
    MAPA
-========================================================= */
+===================================================== */
 
-const map=
+const map =
 L.map('map').setView(
 [-36.75,-72.15],
 13
 );
+
 
 L.tileLayer(
 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
@@ -631,58 +635,81 @@ attribution:'© OpenStreetMap'
 
 
 
-/* =========================================================
-   VARIABLES
-========================================================= */
+/* =====================================================
+   VARIABLES DEL VIAJE
+===================================================== */
 
-let watchId=null;
+let gpsWatchId = null;
 
-let points=[];
+let viajeActivo = false;
 
-let lastPoint=null;
+let puntosGPS = [];
 
-let previousPoint=null;
+let ultimoPunto = null;
 
-let totalKm=0;
+let kilometros = 0;
 
-let startTime=null;
+let horaInicio = null;
 
-let endTime=null;
+let horaLlegada = null;
 
-let routeLine=null;
+let linea = null;
 
-let vehicleMarker=null;
+let marcadorVehiculo = null;
 
-let startMarker=null;
+let marcadorInicio = null;
 
-let endMarker=null;
+let marcadorLlegada = null;
 
-let active=false;
+let paradas = [];
 
-let stops=[];
+let posibleParada = null;
 
-let possibleStop=null;
-
-let stopTimer=null;
-
-let pendingStopDistance=0;
-
-let nextStopIndex=0;
+let siguienteParada = 0;
 
 
 
-/* =========================================================
-   DISTANCIA
-========================================================= */
+/* =====================================================
+   CONFIGURACIÓN DETECCIÓN
+===================================================== */
 
-function distanceMeters(
+/*
+   El vehículo debe permanecer detenido
+   al menos 45 segundos.
+*/
+
+const TIEMPO_MINIMO_PARADA = 45;
+
+
+/*
+   Se considera detenido si el movimiento
+   es muy pequeño.
+*/
+
+const DISTANCIA_MOVIMIENTO_PARADA = 25;
+
+
+/*
+   Después de detectar una parada,
+   el vehículo debe alejarse para continuar.
+*/
+
+const DISTANCIA_SALIDA_PARADA = 40;
+
+
+
+/* =====================================================
+   DISTANCIA GPS
+===================================================== */
+
+function distanciaMetros(
 lat1,
 lon1,
 lat2,
 lon2
 ){
 
-const Rm=6371000;
+const radio=6371000;
 
 const rad=
 x=>x*Math.PI/180;
@@ -699,7 +726,7 @@ Math.cos(rad(lat1))*
 Math.cos(rad(lat2))*
 Math.sin(dLon/2)**2;
 
-return 2*Rm*
+return 2*radio*
 Math.atan2(
 Math.sqrt(a),
 Math.sqrt(1-a)
@@ -709,13 +736,13 @@ Math.sqrt(1-a)
 
 
 
-/* =========================================================
+/* =====================================================
    HORA
-========================================================= */
+===================================================== */
 
-function formatTime(date){
+function hora(d){
 
-return date.toLocaleTimeString(
+return d.toLocaleTimeString(
 'es-CL',
 {
 hour:'2-digit',
@@ -728,13 +755,13 @@ second:'2-digit'
 
 
 
-/* =========================================================
+/* =====================================================
    FECHA
-========================================================= */
+===================================================== */
 
-function formatDate(date){
+function fecha(d){
 
-return date.toLocaleDateString(
+return d.toLocaleDateString(
 'es-CL',
 {
 day:'2-digit',
@@ -747,73 +774,82 @@ year:'numeric'
 
 
 
-/* =========================================================
+/* =====================================================
    DURACIÓN
-========================================================= */
+===================================================== */
 
-function formatDuration(ms){
+function duracion(ms){
 
-let s=
+let segundos=
 Math.floor(ms/1000);
 
-let h=
-Math.floor(s/3600);
+let horas=
+Math.floor(segundos/3600);
 
-s%=3600;
+segundos%=3600;
 
-let m=
-Math.floor(s/60);
+let minutos=
+Math.floor(segundos/60);
 
-s%=60;
+segundos%=60;
 
-if(h)
-return h+' h '+m+' min';
+if(horas){
 
-if(m)
-return m+' min '+s+' s';
+return horas+
+' h '+
+minutos+
+' min';
 
-return s+' s';
+}
+
+if(minutos){
+
+return minutos+
+' min '+
+segundos+
+' s';
+
+}
+
+return segundos+' s';
 
 }
 
 
 
-/* =========================================================
-   DESCRIPCIÓN
-========================================================= */
+/* =====================================================
+   CAMBIAR RECORRIDO
+===================================================== */
 
-function showDescription(){
+routeSelect.addEventListener(
+'change',
+function(){
 
-const id=
+const id =
 routeSelect.value;
 
 if(!id){
 
-descEl.textContent=
+desc.textContent=
 'Seleccione un recorrido.';
 
 return;
 
 }
 
-descEl.innerHTML=
+desc.innerHTML=
 '<b>Recorrido N.º '+
 id+
 '</b><br>'+
 R[id].s.join(' ➜ ');
 
-}
-
-routeSelect.addEventListener(
-'change',
-showDescription
-);
+});
 
 
 
-/* =========================================================
-   LISTA DE RECORRIDOS
-========================================================= */
+/* =====================================================
+   LISTAR RECORRIDOS
+===================================================== */
 
 Object.entries(R).forEach(
 ([id,r])=>{
@@ -823,7 +859,8 @@ document.createElement('div');
 
 div.className='route';
 
-div.style.borderColor=r.c;
+div.style.borderColor=
+r.c;
 
 div.innerHTML=
 '<b>Recorrido N.º '+
@@ -831,461 +868,53 @@ id+
 '</b><br>'+
 r.s.join(' ➜ ');
 
-routesEl.appendChild(div);
+routes.appendChild(div);
 
 });
 
 
 
-/* =========================================================
-   PARADAS APRENDIDAS
-========================================================= */
+/* =====================================================
+   LIMPIAR MAPA
+===================================================== */
 
-function getLearnedStops(routeId){
+function limpiarMapa(){
 
-const key=
-'paradas_tiuquilemu_'+routeId;
+if(linea){
 
-try{
+map.removeLayer(linea);
 
-return JSON.parse(
-localStorage.getItem(key)
-)||[];
-
-}catch(e){
-
-return[];
+linea=null;
 
 }
 
-}
+if(marcadorVehiculo){
 
-
-
-function saveLearnedStops(
-routeId,
-data
-){
-
-const key=
-'paradas_tiuquilemu_'+routeId;
-
-localStorage.setItem(
-key,
-JSON.stringify(data)
+map.removeLayer(
+marcadorVehiculo
 );
 
+marcadorVehiculo=null;
+
 }
 
+if(marcadorInicio){
 
-
-/* =========================================================
-   BUSCAR PARADA APRENDIDA
-========================================================= */
-
-function findLearnedStop(
-routeId,
-index,
-lat,
-lon
-){
-
-const learned=
-getLearnedStops(routeId);
-
-const item=
-learned[index];
-
-if(!item)
-return false;
-
-const d=
-distanceMeters(
-lat,
-lon,
-item.lat,
-item.lon
+map.removeLayer(
+marcadorInicio
 );
 
-return d<=LEARNED_STOP_RADIUS;
+marcadorInicio=null;
 
 }
 
+if(marcadorLlegada){
 
-
-/* =========================================================
-   APRENDER UBICACIÓN
-========================================================= */
-
-function learnStop(
-routeId,
-index,
-lat,
-lon
-){
-
-const learned=
-getLearnedStops(routeId);
-
-const place=
-R[routeId].s[index];
-
-learned[index]={
-name:place,
-lat:lat,
-lon:lon
-};
-
-saveLearnedStops(
-routeId,
-learned
+map.removeLayer(
+marcadorLlegada
 );
 
-}
-
-
-
-/* =========================================================
-   ACTUALIZAR LISTA DE PARADAS
-========================================================= */
-
-function updateStopsList(){
-
-if(stops.length===0){
-
-stopsListEl.innerHTML=
-'Esperando detección automática de paradas...';
-
-return;
-
-}
-
-stopsListEl.innerHTML=
-stops.map(
-s=>`
-
-<div class="stop-item">
-
-<b>
-📍 Parada ${s.number} — ${s.name}
-</b>
-
-<br>
-
-🕐 Llegada:
-${formatTime(s.time)}
-
-<br>
-
-📍 GPS:
-${s.lat.toFixed(6)},
-${s.lon.toFixed(6)}
-
-<br>
-
-<span>
-🚐 Parada detectada automáticamente
-</span>
-
-</div>
-
-`
-).join('');
-
-}
-
-
-
-/* =========================================================
-   MARCADOR DE PARADA
-========================================================= */
-
-function createStopMarker(
-stop
-){
-
-const icon=
-L.divIcon({
-
-className:'automatic-stop',
-
-html:
-`
-<div style="
-background:#8e44ad;
-color:white;
-width:34px;
-height:34px;
-border-radius:50%;
-display:flex;
-align-items:center;
-justify-content:center;
-font-weight:bold;
-border:3px solid white;
-box-shadow:0 2px 7px #0008;
-">
-${stop.number}
-</div>
-`,
-
-iconSize:[34,34],
-
-iconAnchor:[17,17]
-
-});
-
-
-const marker=
-L.marker(
-[stop.lat,stop.lon],
-{icon:icon}
-).addTo(map);
-
-
-marker.bindPopup(
-
-'<b>📍 Parada '+
-stop.number+
-'</b><br>'+
-'<b>'+
-stop.name+
-'</b><br>'+
-'🕐 '+
-formatTime(stop.time)+
-'<br>'+
-'👨‍👩‍👧 Parada de estudiantes'+
-'<br>'+
-'📍 '+
-stop.lat.toFixed(6)+
-', '+
-stop.lon.toFixed(6)
-
-);
-
-
-return marker;
-
-}
-
-
-
-/* =========================================================
-   REGISTRAR PARADA AUTOMÁTICA
-========================================================= */
-
-function registerAutomaticStop(
-lat,
-lon
-){
-
-const id=
-routeSelect.value;
-
-if(!id)
-return;
-
-
-/*
-   La última localidad es el Liceo.
-   Nunca se registra como parada de estudiante.
-*/
-
-const studentStops=
-R[id].s.length-1;
-
-
-/*
-   Si ya registramos todas las paradas
-   de estudiantes, no registrar más.
-*/
-
-if(nextStopIndex>=studentStops)
-return;
-
-
-const name=
-R[id].s[nextStopIndex];
-
-const time=
-new Date();
-
-
-/*
-   Aprender ubicación.
-*/
-
-learnStop(
-id,
-nextStopIndex,
-lat,
-lon
-);
-
-
-const stop={
-number:nextStopIndex+1,
-name:name,
-lat:lat,
-lon:lon,
-time:time,
-marker:null
-};
-
-
-stop.marker=
-createStopMarker(stop);
-
-
-stops.push(stop);
-
-nextStopIndex++;
-
-updateStopsList();
-
-
-statusEl.textContent=
-'📍 Parada automática detectada: '+
-name+
-' — '+
-formatTime(time);
-
-}
-
-
-
-/* =========================================================
-   DETECCIÓN DE PARADAS
-========================================================= */
-
-function processStopDetection(
-lat,
-lon
-){
-
-if(!active)
-return;
-
-
-const now=
-Date.now();
-
-
-/*
-   Si estamos en una parada ya aprendida,
-   comprobamos que sea la siguiente parada.
-*/
-
-const id=
-routeSelect.value;
-
-const learnedMatch=
-findLearnedStop(
-id,
-nextStopIndex,
-lat,
-lon
-);
-
-
-/*
-   Si el vehículo está dentro de la zona
-   conocida de la siguiente parada, usamos
-   el aprendizaje previo.
-*/
-
-if(learnedMatch){
-
-if(!possibleStop){
-
-possibleStop={
-lat:lat,
-lon:lon,
-start:now
-};
-
-statusEl.textContent=
-'📍 En zona de '+
-R[id].s[nextStopIndex]+
-'. Confirmando parada...';
-
-}else{
-
-const seconds=
-(now-possibleStop.start)/1000;
-
-if(seconds>=STOP_DWELL_SECONDS){
-
-registerAutomaticStop(
-lat,
-lon
-);
-
-possibleStop=null;
-
-}
-
-}
-
-return;
-
-}
-
-
-
-/*
-   Si no existe ubicación aprendida,
-   buscamos una detención.
-*/
-
-if(!possibleStop){
-
-possibleStop={
-lat:lat,
-lon:lon,
-start:now
-};
-
-return;
-
-}
-
-
-const movement=
-distanceMeters(
-possibleStop.lat,
-possibleStop.lon,
-lat,
-lon
-);
-
-
-if(movement>25){
-
-possibleStop=null;
-
-return;
-
-}
-
-
-const seconds=
-(now-possibleStop.start)/1000;
-
-
-if(seconds>=STOP_DWELL_SECONDS){
-
-/*
-   Se considera posible parada.
-   La registramos como siguiente
-   punto del recorrido.
-*/
-
-registerAutomaticStop(
-lat,
-lon
-);
-
-possibleStop=null;
+marcadorLlegada=null;
 
 }
 
@@ -1293,21 +922,27 @@ possibleStop=null;
 
 
 
-/* =========================================================
-   INICIAR
-========================================================= */
+/* =====================================================
+   INICIAR RECORRIDO
+===================================================== */
 
-startBtn.addEventListener(
+startButton.addEventListener(
 'click',
 function(){
 
-const id=
+console.log(
+'BOTÓN INICIAR PRESIONADO'
+);
+
+
+const id =
 routeSelect.value;
+
 
 if(!id){
 
 alert(
-'Seleccione un recorrido.'
+'Primero seleccione un recorrido.'
 );
 
 return;
@@ -1318,7 +953,7 @@ return;
 if(!navigator.geolocation){
 
 alert(
-'Este dispositivo no permite utilizar GPS.'
+'Este dispositivo no tiene GPS disponible.'
 );
 
 return;
@@ -1326,31 +961,44 @@ return;
 }
 
 
-points=[];
+/*
+   Limpiar viaje anterior.
+*/
 
-lastPoint=null;
+if(gpsWatchId!==null){
 
-previousPoint=null;
+navigator.geolocation.clearWatch(
+gpsWatchId
+);
 
-totalKm=0;
+gpsWatchId=null;
 
-startTime=new Date();
-
-endTime=null;
-
-active=true;
-
-stops=[];
-
-possibleStop=null;
-
-nextStopIndex=0;
+}
 
 
-clearMap();
+limpiarMapa();
 
 
-routeLine=
+puntosGPS=[];
+
+ultimoPunto=null;
+
+kilometros=0;
+
+horaInicio=new Date();
+
+horaLlegada=null;
+
+paradas=[];
+
+posibleParada=null;
+
+siguienteParada=0;
+
+viajeActivo=true;
+
+
+linea=
 L.polyline(
 [],
 {
@@ -1361,140 +1009,164 @@ opacity:.9
 ).addTo(map);
 
 
-kmEl.textContent=
+km.textContent=
 '0,00 km';
 
-iniEl.textContent=
-formatTime(startTime);
+ini.textContent=
+hora(horaInicio);
 
-finEl.textContent=
+fin.textContent=
 '--:--';
 
-durEl.textContent=
+dur.textContent=
 '--';
 
-summaryEl.style.display=
+
+summary.style.display=
 'none';
 
-emailStatusEl.style.display=
+
+emailStatus.style.display=
 'none';
 
 
-startBtn.disabled=true;
+startButton.disabled=true;
 
-stopBtn.disabled=false;
-
-
-statusEl.textContent=
-'🛰️ GPS activo. Buscando automáticamente las paradas de estudiantes...';
+stopButton.disabled=false;
 
 
-updateStopsList();
+gpsStatus.textContent=
+'🛰️ GPS ACTIVO';
 
 
-watchId=
+status.className=
+'info';
+
+status.textContent=
+'Buscando ubicación GPS y registrando trayectoria...';
+
+
+stopsList.innerHTML=
+'Esperando las primeras posiciones GPS...';
+
+
+/*
+   IMPORTANTE:
+   watchPosition se inicia aquí.
+*/
+
+gpsWatchId=
 navigator.geolocation.watchPosition(
 
-handleGPS,
+recibirGPS,
 
-handleGPSError,
+errorGPS,
 
 {
 enableHighAccuracy:true,
-maximumAge:3000,
-timeout:15000
+maximumAge:2000,
+timeout:20000
 }
 
 );
+
 
 });
 
 
 
-/* =========================================================
-   GPS
-========================================================= */
+/* =====================================================
+   RECIBIR GPS
+===================================================== */
 
-function handleGPS(position){
+function recibirGPS(position){
 
-if(!active)
-return;
-
-
-const lat=
-position.coords.latitude;
-
-const lon=
-position.coords.longitude;
-
-const accuracy=
-position.coords.accuracy;
-
-
-if(accuracy>100){
-
-statusEl.textContent=
-'⚠️ GPS poco preciso ('+
-Math.round(accuracy)+
-' m).';
+if(!viajeActivo){
 
 return;
 
 }
+
+
+const lat =
+position.coords.latitude;
+
+const lon =
+position.coords.longitude;
+
+const precision =
+position.coords.accuracy;
+
+
+/*
+   Guardamos siempre la posición.
+*/
+
+puntosGPS.push([
+lat,
+lon
+]);
 
 
 /*
    Calcular kilómetros.
 */
 
-if(lastPoint){
+if(ultimoPunto){
 
-const d=
-distanceMeters(
-lastPoint[0],
-lastPoint[1],
+const metros=
+distanciaMetros(
+ultimoPunto[0],
+ultimoPunto[1],
 lat,
 lon
 );
 
-if(d>=3 && d<500){
 
-totalKm+=
-d/1000;
+/*
+   Ignorar saltos GPS absurdos.
+*/
+
+if(metros>=3 && metros<500){
+
+kilometros +=
+metros/1000;
 
 }
 
 }
 
 
-lastPoint=[
+ultimoPunto=[
 lat,
 lon
 ];
 
 
-points.push([
-lat,
-lon
-]);
-
-
-routeLine.setLatLngs(
-points
+linea.setLatLngs(
+puntosGPS
 );
 
 
+km.textContent=
+kilometros
+.toFixed(2)
+.replace('.',',')+
+' km';
+
+
 /*
-   Marcador inicio.
+   Marcador de inicio.
 */
 
-if(!startMarker){
+if(!marcadorInicio){
 
-startMarker=
+marcadorInicio=
 L.marker(
 [lat,lon]
-).addTo(map)
-.bindPopup(
+).addTo(map);
+
+marcadorInicio.bindPopup(
 '🟢 Inicio del recorrido'
 );
 
@@ -1502,50 +1174,55 @@ L.marker(
 
 
 /*
-   Vehículo.
+   Marcador del furgón.
 */
 
-if(!vehicleMarker){
+if(!marcadorVehiculo){
 
-vehicleMarker=
+marcadorVehiculo=
 L.marker(
 [lat,lon]
-).addTo(map)
-.bindPopup(
+).addTo(map);
+
+marcadorVehiculo.bindPopup(
 '🚐 Furgón escolar'
 );
 
 }else{
 
-vehicleMarker.setLatLng(
+marcadorVehiculo.setLatLng(
 [lat,lon]
 );
 
 }
 
 
-kmEl.textContent=
-totalKm
-.toFixed(2)
-.replace('.',',')+
+/*
+   Mostrar precisión.
+*/
+
+gpsStatus.textContent=
+'🛰️ GPS ACTIVO • Precisión: '+
+Math.round(precision)+
+' m';
+
+
+status.textContent=
+'GPS actualizado • '+
+hora(new Date())+
+' • '+
+kilometros.toFixed(2)+
 ' km';
 
 
 /*
-   Detección automática.
+   Detectar posible parada.
 */
 
-processStopDetection(
+detectarParada(
 lat,
 lon
 );
-
-
-statusEl.textContent=
-'🛰️ GPS activo • '+
-formatTime(new Date())+
-' • Paradas: '+
-stops.length;
 
 
 map.setView(
@@ -1557,331 +1234,791 @@ map.setView(
 
 
 
-/* =========================================================
+/* =====================================================
    ERROR GPS
-========================================================= */
+===================================================== */
 
-function handleGPSError(error){
+function errorGPS(error){
 
-let message=
-'Error desconocido.';
-
-if(error.code===1)
-message=
-'Permiso de ubicación rechazado.';
-
-if(error.code===2)
-message=
-'Ubicación no disponible.';
-
-if(error.code===3)
-message=
-'Tiempo de espera agotado.';
-
-
-statusEl.textContent=
-'⚠️ GPS: '+message;
-
-}
-
-
-
-/* =========================================================
-   LIMPIAR MAPA
-========================================================= */
-
-function clearMap(){
-
-if(routeLine){
-
-map.removeLayer(routeLine);
-
-routeLine=null;
-
-}
-
-if(vehicleMarker){
-
-map.removeLayer(vehicleMarker);
-
-vehicleMarker=null;
-
-}
-
-if(startMarker){
-
-map.removeLayer(startMarker);
-
-startMarker=null;
-
-}
-
-if(endMarker){
-
-map.removeLayer(endMarker);
-
-endMarker=null;
-
-}
-
-}
-
-
-
-/* =========================================================
-   FINALIZAR
-========================================================= */
-
-stopBtn.addEventListener(
-'click',
-async function(){
-
-if(!active)
-return;
-
-
-if(watchId!==null){
-
-navigator.geolocation.clearWatch(
-watchId
+console.error(
+'GPS:',
+error
 );
 
-watchId=null;
+
+if(error.code===1){
+
+gpsStatus.textContent=
+'❌ GPS: permiso rechazado';
+
+status.className='error';
+
+status.textContent=
+'Debes permitir la ubicación GPS del navegador.';
+
+}
+
+else if(error.code===2){
+
+gpsStatus.textContent=
+'⚠️ GPS: ubicación no disponible';
+
+}
+
+else if(error.code===3){
+
+gpsStatus.textContent=
+'⚠️ GPS: tiempo de espera agotado';
+
+}
+
+else{
+
+gpsStatus.textContent=
+'⚠️ Error desconocido del GPS';
+
+}
 
 }
 
 
-active=false;
 
-endTime=
-new Date();
+/* =====================================================
+   DETECCIÓN DE PARADAS
+===================================================== */
+
+function detectarParada(
+lat,
+lon
+){
+
+if(!viajeActivo){
+
+return;
+
+}
 
 
-const id=
+const id =
 routeSelect.value;
 
 
-if(points.length){
+/*
+   Último punto de cada recorrido
+   es el Liceo.
 
-const last=
-points[points.length-1];
+   No se registra como parada
+   de estudiante.
+*/
+
+const cantidadParadas =
+R[id].s.length-1;
 
 
-endMarker=
-L.marker(last)
-.addTo(map)
-.bindPopup(
+/*
+   Ya detectamos todas las paradas.
+*/
+
+if(
+siguienteParada >=
+cantidadParadas
+){
+
+return;
+
+}
+
+
+const ahora =
+Date.now();
+
+
+/*
+   Si todavía no tenemos
+   una posible parada.
+*/
+
+if(!posibleParada){
+
+posibleParada={
+
+lat:lat,
+
+lon:lon,
+
+inicio:ahora
+
+};
+
+return;
+
+}
+
+
+/*
+   ¿Cuánto se movió desde
+   que comenzó la posible parada?
+*/
+
+const movimiento=
+distanciaMetros(
+posibleParada.lat,
+posibleParada.lon,
+lat,
+lon
+);
+
+
+/*
+   Si se alejó demasiado,
+   ya no estaba detenido.
+*/
+
+if(
+movimiento >
+DISTANCIA_MOVIMIENTO_PARADA
+){
+
+posibleParada=null;
+
+return;
+
+}
+
+
+/*
+   Tiempo detenido.
+*/
+
+const segundos=
+(ahora-posibleParada.inicio)/1000;
+
+
+/*
+   Todavía no cumple tiempo mínimo.
+*/
+
+if(
+segundos <
+TIEMPO_MINIMO_PARADA
+){
+
+status.textContent=
+'🛰️ Posible parada detectada. '+
+Math.round(
+TIEMPO_MINIMO_PARADA-segundos
+)+
+' segundos para confirmar...';
+
+return;
+
+}
+
+
+/*
+   CONFIRMAMOS LA PARADA.
+*/
+
+registrarParada(
+lat,
+lon
+);
+
+
+posibleParada=null;
+
+}
+
+
+
+/* =====================================================
+   REGISTRAR PARADA
+===================================================== */
+
+function registrarParada(
+lat,
+lon
+){
+
+const id =
+routeSelect.value;
+
+
+const cantidadParadas =
+R[id].s.length-1;
+
+
+if(
+siguienteParada >=
+cantidadParadas
+){
+
+return;
+
+}
+
+
+const nombre=
+R[id].s[
+siguienteParada
+];
+
+
+const nuevaParada={
+
+numero:
+siguienteParada+1,
+
+nombre:nombre,
+
+lat:lat,
+
+lon:lon,
+
+hora:new Date()
+
+};
+
+
+paradas.push(
+nuevaParada
+);
+
+
+siguienteParada++;
+
+
+/*
+   Marcador numerado.
+*/
+
+const icono=
+L.divIcon({
+
+className:'parada-icon',
+
+html:
+'<div style="' +
+'background:#8e44ad;' +
+'color:white;' +
+'width:34px;' +
+'height:34px;' +
+'border-radius:50%;' +
+'display:flex;' +
+'align-items:center;' +
+'justify-content:center;' +
+'font-weight:bold;' +
+'border:3px solid white;' +
+'box-shadow:0 2px 7px #0008;' +
+'">' +
+nuevaParada.numero+
+'</div>',
+
+iconSize:[
+34,
+34
+],
+
+iconAnchor:[
+17,
+17
+]
+
+});
+
+
+const marcador=
+L.marker(
+[lat,lon],
+{
+icon:icono
+}
+).addTo(map);
+
+
+marcador.bindPopup(
+
+'<b>📍 Parada '+
+nuevaParada.numero+
+'</b><br>'+
+nuevaParada.nombre+
+'<br>🕐 '+
+hora(nuevaParada.hora)+
+'<br>👨‍👩‍👧 Parada de estudiante'
+
+);
+
+
+actualizarParadas();
+
+
+status.className=
+'success';
+
+status.textContent=
+'📍 Parada '+
+nuevaParada.numero+
+' detectada: '+
+nombre+
+' • '+
+hora(nuevaParada.hora);
+
+}
+
+
+
+/* =====================================================
+   LISTA DE PARADAS
+===================================================== */
+
+function actualizarParadas(){
+
+if(paradas.length===0){
+
+stopsList.innerHTML=
+'No se han detectado paradas todavía.';
+
+return;
+
+}
+
+
+stopsList.innerHTML=
+paradas.map(
+p=>`
+
+<div class="stop">
+
+<b>
+📍 Parada ${p.numero} — ${p.nombre}
+</b>
+
+<br>
+
+🕐 Hora:
+${hora(p.hora)}
+
+<br>
+
+📌 Coordenadas:
+${p.lat.toFixed(6)},
+${p.lon.toFixed(6)}
+
+<br>
+
+👨‍👩‍👧 Parada de estudiante detectada automáticamente.
+
+</div>
+
+`
+).join('');
+
+}
+
+
+
+/* =====================================================
+   FINALIZAR RECORRIDO
+===================================================== */
+
+stopButton.addEventListener(
+'click',
+function(){
+
+console.log(
+'BOTÓN FINALIZAR PRESIONADO'
+);
+
+
+if(!viajeActivo){
+
+return;
+
+}
+
+
+/*
+   Detener GPS.
+*/
+
+if(gpsWatchId!==null){
+
+navigator.geolocation.clearWatch(
+gpsWatchId
+);
+
+gpsWatchId=null;
+
+}
+
+
+viajeActivo=false;
+
+horaLlegada=
+new Date();
+
+
+const id =
+routeSelect.value;
+
+
+/*
+   Último punto disponible.
+*/
+
+if(
+puntosGPS.length>0
+){
+
+const ultimo=
+puntosGPS[
+puntosGPS.length-1
+];
+
+
+marcadorLlegada=
+L.marker(
+ultimo
+).addTo(map);
+
+
+marcadorLlegada.bindPopup(
 '🏫 Llegada al Liceo Tiuquilemu'
-)
-.openPopup();
+).openPopup();
 
+
+if(linea){
 
 map.fitBounds(
-routeLine.getBounds(),
+linea.getBounds(),
 {
-padding:[30,30]
+padding:[
+30,
+30
+]
 }
 );
 
 }
 
+}
 
-finEl.textContent=
-formatTime(endTime);
 
-durEl.textContent=
-formatDuration(
-endTime-startTime
+fin.textContent=
+hora(horaLlegada);
+
+dur.textContent=
+duracion(
+horaLlegada-horaInicio
 );
 
-kmEl.textContent=
-totalKm
+km.textContent=
+kilometros
 .toFixed(2)
 .replace('.',',')+
 ' km';
 
 
-startBtn.disabled=false;
+startButton.disabled=false;
 
-stopBtn.disabled=true;
+stopButton.disabled=true;
 
 
-resultEl.innerHTML=
+result.innerHTML=
 
 '<p><b>🚐 Recorrido:</b> N.º '+
 id+
 '</p>'+
 
 '<p><b>📅 Fecha:</b> '+
-formatDate(startTime)+
+fecha(horaInicio)+
 '</p>'+
 
-'<p><b>🛣️ Kilómetros:</b> '+
-totalKm.toFixed(2).replace('.',',')+
-' km</p>'+
-
 '<p><b>🕐 Inicio:</b> '+
-formatTime(startTime)+
+hora(horaInicio)+
 '</p>'+
 
 '<p><b>🏫 Llegada:</b> '+
-formatTime(endTime)+
+hora(horaLlegada)+
 '</p>'+
 
 '<p><b>⏱️ Duración:</b> '+
-formatDuration(
-endTime-startTime
+duracion(
+horaLlegada-horaInicio
 )+
 '</p>'+
 
+'<p><b>🛣️ Kilómetros:</b> '+
+kilometros
+.toFixed(2)
+.replace('.',',')+
+' km</p>'+
+
 '<p><b>📍 Puntos GPS:</b> '+
-points.length+
+puntosGPS.length+
 '</p>'+
 
-'<p><b>🚏 Paradas de estudiantes:</b> '+
-stops.length+
+'<p><b>🚏 Paradas:</b> '+
+paradas.length+
 '</p>';
 
 
-summaryEl.style.display=
+summary.style.display=
 'block';
 
 
-summaryEl.scrollIntoView({
+status.className=
+'info';
+
+status.textContent=
+'🏫 Llegada al Liceo registrada. Enviando reporte...';
+
+
+summary.scrollIntoView({
 behavior:'smooth'
 });
 
 
-statusEl.textContent=
-'🏫 Llegada registrada. Generando hoja de ruta...';
-
-
 /*
-   Enviar automáticamente.
+   ENVIAR CORREO.
 */
 
-await enviarHojaDeRuta();
+enviarReporte();
 
 });
 
 
 
-/* =========================================================
-   EMAILJS
-========================================================= */
+/* =====================================================
+   PREPARAR DATOS DEL CORREO
+===================================================== */
 
-async function enviarHojaDeRuta(){
+function crearDetalleParadas(){
 
-const id=
-routeSelect.value;
+if(paradas.length===0){
+
+return 'No se detectaron paradas automáticamente.';
+
+}
 
 
-const detalle=
-stops.length===0
-
-?
-
-'No se detectaron paradas automáticamente.'
-
-:
-
-stops.map(
-stop=>
+return paradas.map(
+p=>
 
 'Parada '+
-stop.number+
-' - '+
-stop.name+
-' - Hora: '+
-formatTime(stop.time)+
-' - GPS: '+
-stop.lat.toFixed(6)+
+p.numero+
+' | '+
+p.nombre+
+' | Hora: '+
+hora(p.hora)+
+' | GPS: '+
+p.lat.toFixed(6)+
 ', '+
-stop.lon.toFixed(6)
+p.lon.toFixed(6)
 
 ).join('\n');
 
+}
 
-const params={
 
-recorrido:id,
 
-fecha:formatDate(startTime),
+/* =====================================================
+   PREPARAR RESUMEN GPS
+===================================================== */
 
-hora_inicio:formatTime(startTime),
+function crearResumenGPS(){
 
-hora_llegada:formatTime(endTime),
+if(puntosGPS.length===0){
+
+return 'Sin puntos GPS.';
+
+}
+
+
+const primero=
+puntosGPS[0];
+
+const ultimo=
+puntosGPS[
+puntosGPS.length-1
+];
+
+
+return(
+
+'Inicio GPS: '+
+primero[0].toFixed(6)+
+', '+
+primero[1].toFixed(6)+
+'\n'+
+
+'Llegada GPS: '+
+ultimo[0].toFixed(6)+
+', '+
+ultimo[1].toFixed(6)+
+'\n'+
+
+'Total puntos GPS: '+
+puntosGPS.length
+
+);
+
+}
+
+
+
+/* =====================================================
+   ENVIAR EMAIL
+===================================================== */
+
+async function enviarReporte(){
+
+emailStatus.style.display=
+'block';
+
+
+emailStatus.className=
+'info';
+
+
+emailStatus.textContent=
+'📧 Enviando hoja de ruta por correo...';
+
+
+if(!emailReady){
+
+emailStatus.className=
+'error';
+
+emailStatus.textContent=
+'❌ EmailJS no está disponible.';
+
+return;
+
+}
+
+
+const id =
+routeSelect.value;
+
+
+const detalleParadas=
+crearDetalleParadas();
+
+
+const resumenGPS=
+crearResumenGPS();
+
+
+const datos={
+
+recorrido:
+'Recorrido N.º '+id,
+
+fecha:
+fecha(horaInicio),
+
+hora_inicio:
+hora(horaInicio),
+
+hora_llegada:
+hora(horaLlegada),
 
 duracion:
-formatDuration(
-endTime-startTime
+duracion(
+horaLlegada-horaInicio
 ),
 
 kilometros:
-totalKm
+kilometros
 .toFixed(2)
 .replace('.',','),
 
+cantidad_paradas:
+paradas.length,
+
+cantidad_puntos_gps:
+puntosGPS.length,
+
 paradas:
-stops.length,
+detalleParadas,
 
-puntos_gps:
-points.length,
+resumen_gps:
+resumenGPS,
 
-detalle_paradas:
-detalle
+ruta_oficial:
+R[id].s.join(
+' ➜ '
+),
+
+estado:
+'Recorrido finalizado en Liceo Tiuquilemu',
+
+institucion:
+'Liceo Tiuquilemu'
 
 };
 
 
-emailStatusEl.style.display=
-'block';
-
-emailStatusEl.textContent=
-'📧 Enviando hoja de ruta a Informática e Inspectoría...';
+console.log(
+'Datos enviados a EmailJS:',
+datos
+);
 
 
 try{
 
+const respuesta=
 await emailjs.send(
-
-'service_vb2sbz2',
-
-'template_8qplt4g',
-
-params
-
+EMAILJS_SERVICE,
+EMAILJS_TEMPLATE,
+datos
 );
 
 
-emailStatusEl.className=
+console.log(
+'EmailJS:',
+respuesta
+);
+
+
+emailStatus.className=
 'success';
 
-emailStatusEl.textContent=
-'✅ Hoja de ruta enviada correctamente a Informática e Inspectoría.';
+emailStatus.textContent=
+'✅ Hoja de ruta enviada correctamente a los correos configurados en EmailJS.';
 
 
-statusEl.textContent=
-'✅ Recorrido finalizado y reporte enviado.';
+status.className=
+'success';
+
+status.textContent=
+'✅ Recorrido finalizado y reporte enviado correctamente.';
 
 
 }catch(error){
 
 console.error(
-'EmailJS:',
+'ERROR EMAILJS:',
 error
 );
 
 
-emailStatusEl.className=
+emailStatus.className=
+'error';
+
+emailStatus.innerHTML=
+
+'<b>⚠️ El recorrido terminó, pero el correo no pudo enviarse.</b>'+
+'<br><br>'+
+'Revisa la configuración de EmailJS y la plantilla.';
+
+
+status.className=
 'warning';
 
-emailStatusEl.textContent=
-'⚠️ El recorrido terminó, pero hubo un problema al enviar el correo.';
-
-
-statusEl.textContent=
-'⚠️ Recorrido terminado. Revisa la configuración de EmailJS.';
+status.textContent=
+'⚠️ Recorrido finalizado. El envío del correo presentó un problema.';
 
 }
 
@@ -1889,18 +2026,20 @@ statusEl.textContent=
 
 
 
-/* =========================================================
-   PNG
-========================================================= */
+/* =====================================================
+   DESCARGAR PNG
+===================================================== */
 
-pngBtn.addEventListener(
+document.getElementById(
+'png'
+).addEventListener(
 'click',
 async function(){
 
-if(!points.length){
+if(!puntosGPS.length){
 
 alert(
-'No existe un recorrido para descargar.'
+'No hay un recorrido registrado.'
 );
 
 return;
@@ -1917,32 +2056,28 @@ document.getElementById('map'),
 useCORS:true,
 allowTaint:true,
 scale:2,
-backgroundColor:'#fff'
+backgroundColor:'#ffffff'
 }
 );
 
 
-const link=
+const enlace=
 document.createElement('a');
 
 
-link.download=
+enlace.download=
 'Recorrido_'+
 routeSelect.value+
 '_Liceo_Tiuquilemu.png';
 
 
-link.href=
+enlace.href=
 canvas.toDataURL(
 'image/png'
 );
 
 
-link.click();
-
-
-statusEl.textContent=
-'✅ Imagen descargada correctamente.';
+enlace.click();
 
 
 }catch(error){
@@ -1950,7 +2085,7 @@ statusEl.textContent=
 console.error(error);
 
 alert(
-'No fue posible generar la imagen.'
+'No se pudo generar la imagen.'
 );
 
 }
@@ -1959,18 +2094,20 @@ alert(
 
 
 
-/* =========================================================
-   PDF
-========================================================= */
+/* =====================================================
+   DESCARGAR PDF
+===================================================== */
 
-pdfBtn.addEventListener(
+document.getElementById(
+'pdf'
+).addEventListener(
 'click',
 async function(){
 
-if(!points.length){
+if(!puntosGPS.length){
 
 alert(
-'No existe un recorrido para generar el PDF.'
+'No hay un recorrido registrado.'
 );
 
 return;
@@ -1987,7 +2124,7 @@ document.getElementById('map'),
 useCORS:true,
 allowTaint:true,
 scale:2,
-backgroundColor:'#fff'
+backgroundColor:'#ffffff'
 }
 );
 
@@ -2035,30 +2172,27 @@ pdf.text(
 );
 
 pdf.text(
-'Fecha: '+
-formatDate(startTime),
+'Fecha: '+fecha(horaInicio),
 20,
 47
 );
 
 pdf.text(
-'Inicio: '+
-formatTime(startTime),
+'Inicio: '+hora(horaInicio),
 20,
 54
 );
 
 pdf.text(
-'Llegada: '+
-formatTime(endTime),
+'Llegada: '+hora(horaLlegada),
 20,
 61
 );
 
 pdf.text(
 'Duración: '+
-formatDuration(
-endTime-startTime
+duracion(
+horaLlegada-horaInicio
 ),
 20,
 68
@@ -2066,45 +2200,50 @@ endTime-startTime
 
 pdf.text(
 'Kilómetros: '+
-totalKm.toFixed(2).replace('.',',')+
+kilometros
+.toFixed(2)
+.replace('.',',')+
 ' km',
 20,
 75
 );
 
 pdf.text(
-'Paradas: '+
-stops.length,
+'Paradas detectadas: '+
+paradas.length,
 20,
 82
 );
 
 
-const img=
+const imagen=
 canvas.toDataURL(
 'image/png'
 );
 
 
-const w=170;
+const ancho=170;
 
-const h=
-canvas.height*w/
+const alto=
+canvas.height*
+ancho/
 canvas.width;
 
 
 pdf.addImage(
-img,
+imagen,
 'PNG',
 20,
 90,
-w,
-h
+ancho,
+alto
 );
 
 
 let y=
-90+h+10;
+90+
+alto+
+10;
 
 
 if(y>270){
@@ -2126,11 +2265,10 @@ y
 
 y+=8;
 
-
 pdf.setFontSize(9);
 
 
-if(stops.length===0){
+if(paradas.length===0){
 
 pdf.text(
 'No se detectaron paradas.',
@@ -2140,8 +2278,8 @@ y
 
 }else{
 
-stops.forEach(
-stop=>{
+paradas.forEach(
+p=>{
 
 if(y>280){
 
@@ -2153,11 +2291,11 @@ y=20;
 
 pdf.text(
 'Parada '+
-stop.number+
+p.numero+
 ': '+
-stop.name+
+p.nombre+
 ' - '+
-formatTime(stop.time),
+hora(p.hora),
 20,
 y
 );
@@ -2166,9 +2304,9 @@ y+=6;
 
 pdf.text(
 'GPS: '+
-stop.lat.toFixed(6)+
+p.lat.toFixed(6)+
 ', '+
-stop.lon.toFixed(6),
+p.lon.toFixed(6),
 20,
 y
 );
@@ -2187,33 +2325,37 @@ id+
 );
 
 
-statusEl.textContent=
-'✅ PDF descargado correctamente.';
-
-
 }catch(error){
 
 console.error(error);
 
 alert(
-'No fue posible generar el PDF.'
+'No se pudo generar el PDF.'
 );
 
 }
 
-}
+});
 
 
 
-/* =========================================================
-   INICIO
-========================================================= */
+/* =====================================================
+   ESTADO INICIAL
+===================================================== */
 
-showDescription();
+desc.textContent=
+'Seleccione un recorrido.';
+
+gpsStatus.textContent=
+'⚪ GPS esperando inicio.';
+
+
+console.log(
+'Sistema Transporte Escolar cargado correctamente.'
+);
 
 </script>
 
 </body>
-
 </html>
 ```
