@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Monitoreo Furgón - Liceo Tiuquilemu</title>
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <style>
     body { font-family: system-ui, -apple-system, sans-serif; margin: 0; padding: 16px; background-color: #f4f4f9; color: #333; }
     .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); max-width: 480px; margin: 0 auto 16px; }
@@ -13,10 +15,13 @@
     button { width: 100%; padding: 14px; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px; }
     .btn-start { background-color: #34a853; color: white; }
     .btn-stop { background-color: #ea4335; color: white; }
+    .btn-download { background-color: #1a73e8; color: white; margin-top: 12px; }
     .btn-switch { background-color: #f1f3f4; color: #333; border: 1px solid #ccc; margin-bottom: 16px; }
     .status-box { padding: 12px; border-radius: 8px; background-color: #e8f0fe; color: #1967d2; font-weight: 500; margin-top: 12px; }
     .route-detail { background-color: #f8f9fa; border-left: 4px solid #1a73e8; padding: 10px; font-size: 13px; color: #555; margin-bottom: 12px; }
     .banner { background-color: #fef7e0; color: #b06000; padding: 10px; border-radius: 8px; font-size: 13px; margin-bottom: 12px; }
+    #driverMap, #parentMap { height: 320px; width: 100%; border-radius: 8px; margin-top: 15px; border: 1px solid #ddd; }
+    .map-capture-area { background: white; padding: 10px; border-radius: 8px; }
     .hidden { display: none; }
   </style>
 </head>
@@ -33,23 +38,31 @@
     
     <label for="driverRouteSelect">Selecciona tu recorrido:</label>
     <select id="driverRouteSelect" onchange="updateRouteInfo('driver')">
-      <option value="4">Recorrido N° 4 - San José Zemita / El Carbón</option>
-      <option value="5">Recorrido N° 5 - Chacay Bajo / Ñiquén Estación</option>
-      <option value="6">Recorrido N° 6 - Agua Buena / Buli / Tiuquilemu</option>
-      <option value="7">Recorrido N° 7 - Paque Norte / Bucalemu / Virguín</option>
-      <option value="8">Recorrido N° 8 - La Gloria Arriba / Bajo El León</option>
-      <option value="9">Recorrido N° 9 - La Pitrilla / San Vicente / Chacay</option>
-      <option value="10">Recorrido N° 10 - Maitenes / Santa Josefina</option>
+      <option value="4">Recorrido N° 4 - San José Zemita (Rojo)</option>
+      <option value="5">Recorrido N° 5 - Chacay Bajo (Azul)</option>
+      <option value="6">Recorrido N° 6 - Agua Buena (Verde)</option>
+      <option value="7">Recorrido N° 7 - Paque Norte (Naranja)</option>
+      <option value="8">Recorrido N° 8 - La Gloria Arriba (Morado)</option>
+      <option value="9">Recorrido N° 9 - La Pitrilla (Amarillo)</option>
+      <option value="10">Recorrido N° 10 - Maitenes (Turquesa)</option>
     </select>
 
     <div id="driverRouteDetail" class="route-detail">
-      <strong>Ruta:</strong> San Jose Zemita, Zemita, El Carbón, San Fernando, Callejón La Esperanza a Liceo.
+      <strong>Paradas:</strong> San Jose Zemita, Zemita, El Carbón, San Fernando, Callejón La Esperanza, Liceo.
     </div>
 
-    <div class="banner">💡 Mantén la pantalla activa durante el recorrido para evitar interrupciones en la transmisión GPS.</div>
+    <div class="banner">💡 Mantén la pantalla activa durante el recorrido.</div>
     <p style="font-size: 14px;">Permiso GPS: <strong id="gpsPermission">Pendiente</strong></p>
     <div id="driverStatus" class="status-box">Recorrido no iniciado</div>
     <button id="toggleRouteBtn" class="btn-start" onclick="toggleRoute()">Iniciar Recorrido</button>
+
+    <div id="driverMapContainer" class="hidden">
+      <div id="captureArea" class="map-capture-area">
+        <h3 id="mapTitle" style="font-size: 15px; margin: 5px 0; text-align: center; color: #1a73e8;"></h3>
+        <div id="driverMap"></div>
+      </div>
+      <button class="btn-download" onclick="downloadMapImage()">📥 Descargar Imagen del Recorrido</button>
+    </div>
   </div>
 
   <!-- Vista Apoderado -->
@@ -58,54 +71,123 @@
 
     <label for="parentRouteSelect">Selecciona el recorrido a monitorear:</label>
     <select id="parentRouteSelect" onchange="updateRouteInfo('parent')">
-      <option value="4">Recorrido N° 4 - San José Zemita / El Carbón</option>
-      <option value="5">Recorrido N° 5 - Chacay Bajo / Ñiquén Estación</option>
-      <option value="6">Recorrido N° 6 - Agua Buena / Buli / Tiuquilemu</option>
-      <option value="7">Recorrido N° 7 - Paque Norte / Bucalemu / Virguín</option>
-      <option value="8">Recorrido N° 8 - La Gloria Arriba / Bajo El León</option>
-      <option value="9">Recorrido N° 9 - La Pitrilla / San Vicente / Chacay</option>
-      <option value="10">Recorrido N° 10 - Maitenes / Santa Josefina</option>
+      <option value="4">Recorrido N° 4 - San José Zemita (Rojo)</option>
+      <option value="5">Recorrido N° 5 - Chacay Bajo (Azul)</option>
+      <option value="6">Recorrido N° 6 - Agua Buena (Verde)</option>
+      <option value="7">Recorrido N° 7 - Paque Norte (Naranja)</option>
+      <option value="8">Recorrido N° 8 - La Gloria Arriba (Morado)</option>
+      <option value="9">Recorrido N° 9 - La Pitrilla (Amarillo)</option>
+      <option value="10">Recorrido N° 10 - Maitenes (Turquesa)</option>
     </select>
 
     <div id="parentRouteDetail" class="route-detail">
-      <strong>Ruta:</strong> San Jose Zemita, Zemita, El Carbón, San Fernando, Callejón La Esperanza a Liceo.
+      <strong>Paradas:</strong> San Jose Zemita, Zemita, El Carbón, San Fernando, Callejón La Esperanza, Liceo.
     </div>
 
     <div id="parentStatus" class="status-box">Consultando ubicación del furgón...</div>
-    <p style="font-size: 13px; color: #666; margin-top: 16px;">
-      Última posición GPS: <br>
-      <span id="coords">Lat: --, Lon: --</span>
-    </p>
+    <div id="parentMap"></div>
   </div>
 
+  <!-- Scripts: Leaflet y html2canvas -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  
   <script>
-    const routesData = {
-      "4": "San Jose Zemita, Zemita, El Carbón, San Fernando, Callejón La Esperanza a Liceo.",
-      "5": "Chacay Bajo, Las Rosas, Lo Mellado, El Espinal, Ñiquén Estación, San Pedro de Ñiquén a Liceo.",
-      "6": "Agua Buena, Montecillo, Buli Oriente, Llahuimávida - Camino San Pedro, Buli, Tiuquilemu a Liceo.",
-      "7": "Paque Norte, San Gregorio, Bucalemu, Colvindo, Cabrera, Huenutil Centro, Virguín, Tiuquilemu Arriba a Liceo.",
-      "8": "La Gloria Arriba, Camino Bajo El León, La Gloria Centro, Camino Las Torres, La Gloria Abajo a Liceo.",
-      "9": "La Pitrilla, San Vicente, Chacay, Callejón Los Indios, San Roque, San Jorge a Liceo.",
-      "10": "Maitenes, Maitenes El Yugo, Santa Josefina a Liceo."
+    const liceoCoords = [-36.3150, -71.9120];
+
+    const routeColors = {
+      "4": "#e74c3c", "5": "#3498db", "6": "#2ecc71", 
+      "7": "#e67e22", "8": "#9b59b6", "9": "#f1c40f", "10": "#1abc9c"
+    };
+
+    const routesStops = {
+      "4": [
+        { name: "San José Zemita", coords: [-36.3500, -71.9500] },
+        { name: "Zemita", coords: [-36.3400, -71.9400] },
+        { name: "El Carbón", coords: [-36.3300, -71.9300] },
+        { name: "San Fernando", coords: [-36.3250, -71.9250] },
+        { name: "Callejón La Esperanza", coords: [-36.3200, -71.9180] },
+        { name: "Liceo Tiuquilemu", coords: liceoCoords }
+      ],
+      "5": [
+        { name: "Chacay Bajo", coords: [-36.3600, -71.9600] },
+        { name: "Las Rosas", coords: [-36.3500, -71.9500] },
+        { name: "Lo Mellado", coords: [-36.3400, -71.9400] },
+        { name: "El Espinal", coords: [-36.3300, -71.9300] },
+        { name: "Ñiquén Estación", coords: [-36.3250, -71.9200] },
+        { name: "San Pedro de Ñiquén", coords: [-36.3200, -71.9150] },
+        { name: "Liceo Tiuquilemu", coords: liceoCoords }
+      ],
+      "6": [
+        { name: "Agua Buena", coords: [-36.3550, -71.9550] },
+        { name: "Montecillo", coords: [-36.3450, -71.9450] },
+        { name: "Buli Oriente", coords: [-36.3350, -71.9350] },
+        { name: "Llahuimávida", coords: [-36.3300, -71.9280] },
+        { name: "Buli", coords: [-36.3220, -71.9180] },
+        { name: "Liceo Tiuquilemu", coords: liceoCoords }
+      ],
+      "7": [
+        { name: "Paque Norte", coords: [-36.3650, -71.9650] },
+        { name: "San Gregorio", coords: [-36.3550, -71.9520] },
+        { name: "Bucalemu", coords: [-36.3450, -71.9420] },
+        { name: "Colvindo", coords: [-36.3380, -71.9350] },
+        { name: "Cabrera", coords: [-36.3300, -71.9280] },
+        { name: "Huenutil Centro", coords: [-36.3250, -71.9220] },
+        { name: "Virguín", coords: [-36.3200, -71.9160] },
+        { name: "Liceo Tiuquilemu", coords: liceoCoords }
+      ],
+      "8": [
+        { name: "La Gloria Arriba", coords: [-36.3500, -71.9480] },
+        { name: "Camino Bajo El León", coords: [-36.3400, -71.9380] },
+        { name: "La Gloria Centro", coords: [-36.3320, -71.9300] },
+        { name: "Camino Las Torres", coords: [-36.3250, -71.9220] },
+        { name: "La Gloria Abajo", coords: [-36.3200, -71.9150] },
+        { name: "Liceo Tiuquilemu", coords: liceoCoords }
+      ],
+      "9": [
+        { name: "La Pitrilla", coords: [-36.3580, -71.9580] },
+        { name: "San Vicente", coords: [-36.3480, -71.9480] },
+        { name: "Chacay", coords: [-36.3380, -71.9380] },
+        { name: "Callejón Los Indios", coords: [-36.3300, -71.9280] },
+        { name: "San Roque", coords: [-36.3240, -71.9200] },
+        { name: "San Jorge", coords: [-36.3180, -71.9140] },
+        { name: "Liceo Tiuquilemu", coords: liceoCoords }
+      ],
+      "10": [
+        { name: "Maitenes", coords: [-36.3450, -71.9420] },
+        { name: "Maitenes El Yugo", coords: [-36.3320, -71.9300] },
+        { name: "Santa Josefina", coords: [-36.3220, -71.9180] },
+        { name: "Liceo Tiuquilemu", coords: liceoCoords }
+      ]
     };
 
     let isTracking = false;
     let watchId = null;
     let currentRole = 'driver';
+    let driverMapInstance = null;
+    let parentMapInstance = null;
+    let mapLayers = [];
 
     function toggleRole() {
       currentRole = currentRole === 'driver' ? 'parent' : 'driver';
       document.getElementById('roleName').innerText = currentRole === 'driver' ? 'Conductor' : 'Apoderado';
       document.getElementById('driverView').classList.toggle('hidden', currentRole !== 'driver');
       document.getElementById('parentView').classList.toggle('hidden', currentRole !== 'parent');
+      if (currentRole === 'parent') {
+        initParentMap();
+      }
     }
 
     function updateRouteInfo(role) {
       const selectId = role === 'driver' ? 'driverRouteSelect' : 'parentRouteSelect';
       const detailId = role === 'driver' ? 'driverRouteDetail' : 'parentRouteDetail';
       const selectedValue = document.getElementById(selectId).value;
+      const stops = routesStops[selectedValue].map(s => s.name).join(', ');
+      document.getElementById(detailId).innerHTML = `<strong>Paradas:</strong> ${stops}`;
       
-      document.getElementById(detailId).innerHTML = `<strong>Ruta:</strong> ${routesData[selectedValue]}`;
+      if (role === 'parent' && parentMapInstance) {
+        drawStopsAndRoute(parentMapInstance, selectedValue);
+      }
     }
 
     function toggleRoute() {
@@ -122,6 +204,7 @@
         return;
       }
 
+      document.getElementById('driverMapContainer').classList.add('hidden');
       const routeId = document.getElementById('driverRouteSelect').value;
       document.getElementById('gpsPermission').innerText = 'Solicitando...';
 
@@ -130,8 +213,6 @@
           const { latitude, longitude } = position.coords;
           document.getElementById('gpsPermission').innerText = 'Concedido';
           document.getElementById('driverStatus').innerText = `En ruta (Recorrido N°${routeId}): ${latitude.toFixed(4)}, ${longitude.toFixed(4)}`;
-          document.getElementById('parentStatus').innerText = `Furgón Recorrido N°${routeId} en movimiento`;
-          document.getElementById('coords').innerText = `Lat: ${latitude}, Lon: ${longitude}`;
         },
         (error) => {
           document.getElementById('gpsPermission').innerText = 'Error o denegado';
@@ -142,7 +223,7 @@
 
       isTracking = true;
       const btn = document.getElementById('toggleRouteBtn');
-      btn.innerText = 'Finalizar Recorrido';
+      btn.innerText = 'Finalizar Recorrido en Liceo';
       btn.className = 'btn-stop';
     }
 
@@ -152,11 +233,85 @@
         watchId = null;
       }
       isTracking = false;
-      document.getElementById('driverStatus').innerText = 'Recorrido detenido';
-      document.getElementById('parentStatus').innerText = 'El furgón no está en ruta';
+      const routeId = document.getElementById('driverRouteSelect').value;
+      document.getElementById('driverStatus').innerText = `Recorrido N°${routeId} finalizado en Liceo Tiuquilemu.`;
+      
       const btn = document.getElementById('toggleRouteBtn');
       btn.innerText = 'Iniciar Recorrido';
       btn.className = 'btn-start';
+
+      showDriverSummaryMap(routeId);
+    }
+
+    function drawStopsAndRoute(map, routeId) {
+      mapLayers.forEach(layer => map.removeLayer(layer));
+      mapLayers = [];
+
+      const stops = routesStops[routeId];
+      const color = routeColors[routeId];
+      const pointCoords = stops.map(s => s.coords);
+
+      const polyline = L.polyline(pointCoords, { color: color, weight: 5 }).addTo(map);
+      mapLayers.push(polyline);
+
+      stops.forEach((stop, index) => {
+        const isLiceo = index === stops.length - 1;
+        const marker = L.circleMarker(stop.coords, {
+          radius: isLiceo ? 8 : 6,
+          fillColor: isLiceo ? '#1a73e8' : color,
+          color: '#ffffff',
+          weight: 2,
+          opacity: 1,
+          fillOpacity: 0.9
+        }).addTo(map);
+        
+        marker.bindPopup(`<b>${isLiceo ? '🏫' : '🚏'} Parada ${index + 1}:</b> ${stop.name}`);
+        mapLayers.push(marker);
+      });
+
+      map.fitBounds(polyline.getBounds(), { padding: [20, 20] });
+    }
+
+    function showDriverSummaryMap(routeId) {
+      document.getElementById('driverMapContainer').classList.remove('hidden');
+      document.getElementById('mapTitle').innerText = `Recorrido N°${routeId} - Liceo Tiuquilemu`;
+
+      if (!driverMapInstance) {
+        driverMapInstance = L.map('driverMap').setView(liceoCoords, 13);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          maxZoom: 18,
+          crossOrigin: true
+        }).addTo(driverMapInstance);
+      }
+
+      setTimeout(() => {
+        driverMapInstance.invalidateSize();
+        drawStopsAndRoute(driverMapInstance, routeId);
+      }, 300);
+    }
+
+    function initParentMap() {
+      if (!parentMapInstance) {
+        setTimeout(() => {
+          parentMapInstance = L.map('parentMap').setView(liceoCoords, 13);
+          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 18,
+            crossOrigin: true
+          }).addTo(parentMapInstance);
+          drawStopsAndRoute(parentMapInstance, document.getElementById('parentRouteSelect').value);
+        }, 300);
+      }
+    }
+
+    function downloadMapImage() {
+      const element = document.getElementById('captureArea');
+      html2canvas(element, { useCORS: true, allowTaint: true }).then(canvas => {
+        const link = document.createElement('a');
+        const routeId = document.getElementById('driverRouteSelect').value;
+        link.download = `recorrido_N${routeId}_liceo_tiuquilemu.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+      });
     }
   </script>
 </body>
