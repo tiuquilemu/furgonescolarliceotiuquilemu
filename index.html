@@ -15,13 +15,14 @@
     button { width: 100%; padding: 14px; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px; }
     .btn-start { background-color: #34a853; color: white; }
     .btn-stop { background-color: #ea4335; color: white; }
-    .btn-download { background-color: #1a73e8; color: white; margin-top: 12px; }
+    .btn-download { background-color: #1a73e8; color: white; margin-top: 10px; }
+    .btn-pdf { background-color: #8e44ad; color: white; margin-top: 8px; }
     .btn-switch { background-color: #f1f3f4; color: #333; border: 1px solid #ccc; margin-bottom: 16px; }
     .status-box { padding: 12px; border-radius: 8px; background-color: #e8f0fe; color: #1967d2; font-weight: 500; margin-top: 12px; }
     .route-detail { background-color: #f8f9fa; border-left: 4px solid #1a73e8; padding: 10px; font-size: 13px; color: #555; margin-bottom: 12px; }
-    .banner { background-color: #fef7e0; color: #b06000; padding: 10px; border-radius: 8px; font-size: 13px; margin-bottom: 12px; }
+    .banner { background-color: #e8f5e9; color: #2e7d32; padding: 10px; border-radius: 8px; font-size: 13px; margin-bottom: 12px; border: 1px solid #c8e6c9; }
     #driverMap, #parentMap { height: 320px; width: 100%; border-radius: 8px; margin-top: 15px; border: 1px solid #ddd; }
-    .map-capture-area { background: white; padding: 10px; border-radius: 8px; }
+    .map-capture-area { background: white; padding: 12px; border-radius: 8px; }
     .hidden { display: none; }
   </style>
 </head>
@@ -51,17 +52,19 @@
       <strong>Paradas:</strong> San Jose Zemita, Zemita, El Carbón, San Fernando, Callejón La Esperanza, Liceo.
     </div>
 
-    <div class="banner">💡 Mantén la pantalla activa durante el recorrido.</div>
+    <div class="banner">⚡ Modo Activo Multiplataforma: El sistema mantendrá el GPS encendido en Android e iPhone durante el trayecto.</div>
     <p style="font-size: 14px;">Permiso GPS: <strong id="gpsPermission">Pendiente</strong></p>
     <div id="driverStatus" class="status-box">Recorrido no iniciado</div>
     <button id="toggleRouteBtn" class="btn-start" onclick="toggleRoute()">Iniciar Recorrido</button>
 
     <div id="driverMapContainer" class="hidden">
       <div id="captureArea" class="map-capture-area">
-        <h3 id="mapTitle" style="font-size: 15px; margin: 5px 0; text-align: center; color: #1a73e8;"></h3>
+        <h3 id="mapTitle" style="font-size: 16px; margin: 5px 0; text-align: center; color: #1a73e8;"></h3>
+        <p id="mapSubtitle" style="font-size: 12px; text-align: center; color: #666; margin-bottom: 8px;"></p>
         <div id="driverMap"></div>
       </div>
-      <button class="btn-download" onclick="downloadMapImage()">📥 Descargar Imagen del Recorrido</button>
+      <button class="btn-download" onclick="downloadMapImage()">🖼️ Descargar Imagen (PNG)</button>
+      <button class="btn-pdf" onclick="downloadMapPDF()">📄 Descargar Reporte (PDF)</button>
     </div>
   </div>
 
@@ -88,9 +91,10 @@
     <div id="parentMap"></div>
   </div>
 
-  <!-- Scripts: Leaflet y html2canvas -->
+  <!-- Librerías Externas -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   
   <script>
     const liceoCoords = [-36.3150, -71.9120];
@@ -163,10 +167,36 @@
 
     let isTracking = false;
     let watchId = null;
+    let wakeLock = null;
     let currentRole = 'driver';
     let driverMapInstance = null;
     let parentMapInstance = null;
     let mapLayers = [];
+
+    // Gestión de Wake Lock para pantalla inactiva
+    async function activateWakeLock() {
+      try {
+        if ('wakeLock' in navigator) {
+          wakeLock = await navigator.wakeLock.request('screen');
+        }
+      } catch (err) {
+        console.log('Wake Lock no disponible:', err.message);
+      }
+    }
+
+    function releaseWakeLock() {
+      if (wakeLock !== null) {
+        wakeLock.release();
+        wakeLock = null;
+      }
+    }
+
+    // Re-activar Wake Lock si la app regresa al foco
+    document.addEventListener('visibilitychange', () => {
+      if (wakeLock !== null && document.visibilityState === 'visible') {
+        activateWakeLock();
+      }
+    });
 
     function toggleRole() {
       currentRole = currentRole === 'driver' ? 'parent' : 'driver';
@@ -204,6 +234,7 @@
         return;
       }
 
+      activateWakeLock();
       document.getElementById('driverMapContainer').classList.add('hidden');
       const routeId = document.getElementById('driverRouteSelect').value;
       document.getElementById('gpsPermission').innerText = 'Solicitando...';
@@ -211,14 +242,14 @@
       watchId = navigator.geolocation.watchPosition(
         (position) => {
           const { latitude, longitude } = position.coords;
-          document.getElementById('gpsPermission').innerText = 'Concedido';
+          document.getElementById('gpsPermission').innerText = 'Activo';
           document.getElementById('driverStatus').innerText = `En ruta (Recorrido N°${routeId}): ${latitude.toFixed(4)}, ${longitude.toFixed(4)}`;
         },
         (error) => {
           document.getElementById('gpsPermission').innerText = 'Error o denegado';
           alert('Error al obtener GPS: ' + error.message);
         },
-        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+        { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
       );
 
       isTracking = true;
@@ -232,7 +263,9 @@
         navigator.geolocation.clearWatch(watchId);
         watchId = null;
       }
+      releaseWakeLock();
       isTracking = false;
+
       const routeId = document.getElementById('driverRouteSelect').value;
       document.getElementById('driverStatus').innerText = `Recorrido N°${routeId} finalizado en Liceo Tiuquilemu.`;
       
@@ -275,6 +308,7 @@
     function showDriverSummaryMap(routeId) {
       document.getElementById('driverMapContainer').classList.remove('hidden');
       document.getElementById('mapTitle').innerText = `Recorrido N°${routeId} - Liceo Tiuquilemu`;
+      document.getElementById('mapSubtitle').innerText = `Fecha: ${new Date().toLocaleDateString()} | Estado: Finalizado`;
 
       if (!driverMapInstance) {
         driverMapInstance = L.map('driverMap').setView(liceoCoords, 13);
@@ -308,9 +342,29 @@
       html2canvas(element, { useCORS: true, allowTaint: true }).then(canvas => {
         const link = document.createElement('a');
         const routeId = document.getElementById('driverRouteSelect').value;
-        link.download = `recorrido_N${routeId}_liceo_tiuquilemu.png`;
+        link.download = `recorrido_N${routeId}_tiuquilemu.png`;
         link.href = canvas.toDataURL('image/png');
         link.click();
+      });
+    }
+
+    function downloadMapPDF() {
+      const element = document.getElementById('captureArea');
+      const { jsPDF } = window.jspdf;
+
+      html2canvas(element, { useCORS: true, allowTaint: true }).then(canvas => {
+        const imgData = canvas.toDataURL('image/png');
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        const routeId = document.getElementById('driverRouteSelect').value;
+
+        pdf.setFontSize(16);
+        pdf.text("Liceo Tiuquilemu - Reporte de Transporte Escolar", 15, 20);
+        pdf.setFontSize(12);
+        pdf.text(`Recorrido N° ${routeId}`, 15, 28);
+        pdf.text(`Fecha: ${new Date().toLocaleDateString()} - ${new Date().toLocaleTimeString()}`, 15, 34);
+
+        pdf.addImage(imgData, 'PNG', 15, 42, 180, 120);
+        pdf.save(`reporte_recorrido_N${routeId}_tiuquilemu.pdf`);
       });
     }
   </script>
