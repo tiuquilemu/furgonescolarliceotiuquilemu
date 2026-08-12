@@ -1,4 +1,3 @@
-```html
 <!doctype html>
 <html lang="es">
 <head>
@@ -11,2351 +10,2188 @@
 href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 
 <style>
-
 *{
-box-sizing:border-box;
+  box-sizing:border-box;
 }
 
 body{
-margin:0;
-font-family:Arial,sans-serif;
-background:#f3f6fa;
-color:#17233c;
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:#f3f6fa;
+  color:#17233c;
 }
 
 header{
-background:#17365d;
-color:white;
-text-align:center;
-padding:18px;
+  background:#17365d;
+  color:#fff;
+  text-align:center;
+  padding:18px;
 }
 
 header h1{
-margin:0 0 8px;
-font-size:25px;
-}
-
-header p{
-margin:0;
+  margin:0 0 8px;
 }
 
 main{
-max-width:1050px;
-margin:auto;
-padding:15px;
+  max-width:1050px;
+  margin:auto;
+  padding:15px;
 }
 
 .card{
-background:white;
-padding:16px;
-margin:12px 0;
-border-radius:12px;
-box-shadow:0 2px 10px #0001;
+  background:#fff;
+  padding:16px;
+  margin:12px 0;
+  border-radius:12px;
+  box-shadow:0 2px 10px #0001;
 }
 
 select,
 button{
-width:100%;
-padding:13px;
-margin:6px 0;
-border-radius:8px;
-border:1px solid #ccd5e0;
-font-size:16px;
+  width:100%;
+  padding:12px;
+  margin:6px 0;
+  border-radius:8px;
+  border:1px solid #ccd5e0;
+  font-size:15px;
 }
 
 button{
-color:white;
-font-weight:bold;
-border:0;
-cursor:pointer;
+  color:#fff;
+  font-weight:bold;
+  border:0;
+  cursor:pointer;
 }
 
 button:disabled{
-opacity:.5;
-cursor:not-allowed;
+  opacity:.5;
+  cursor:not-allowed;
 }
 
 .start{
-background:#16803c;
+  background:#16803c;
 }
 
 .stop{
-background:#c0392b;
+  background:#c0392b;
 }
 
 .download{
-background:#1769aa;
-}
-
-#map{
-height:520px;
-border-radius:10px;
-overflow:hidden;
-}
-
-.stats{
-display:grid;
-grid-template-columns:repeat(4,1fr);
-gap:8px;
-}
-
-.stat{
-background:#f5f8fc;
-padding:12px;
-text-align:center;
-border-radius:8px;
-}
-
-.stat b{
-display:block;
-font-size:19px;
-color:#17365d;
-margin-top:5px;
-}
-
-.route{
-padding:10px;
-border-left:7px solid #3498db;
-background:#f5f8fc;
-margin:6px 0;
-border-radius:5px;
-}
-
-.stop{
-padding:11px;
-margin:7px 0;
-background:#f5f8fc;
-border-left:6px solid #8e44ad;
-border-radius:7px;
-}
-
-.stop b{
-color:#17365d;
+  background:#1769aa;
 }
 
 .info{
-background:#eef5ff;
-padding:12px;
-border-radius:8px;
-margin-top:10px;
+  background:#6c5ce7;
+}
+
+#map{
+  height:520px;
+  border-radius:10px;
+}
+
+.stats{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:8px;
+}
+
+.stat{
+  background:#f5f8fc;
+  padding:12px;
+  text-align:center;
+  border-radius:8px;
+}
+
+.stat b{
+  display:block;
+  font-size:20px;
+  color:#17365d;
+  margin-top:5px;
+}
+
+.route{
+  padding:9px;
+  border-left:7px solid #3498db;
+  background:#f5f8fc;
+  margin:6px 0;
+}
+
+.stop-item{
+  background:#f5f8fc;
+  padding:10px;
+  margin:7px 0;
+  border-radius:8px;
+  border-left:5px solid #f39c12;
 }
 
 .success{
-background:#eaf8ef;
-padding:12px;
-border-radius:8px;
-margin-top:10px;
+  background:#eaf8ef;
+  border-left:5px solid #16803c;
+  padding:12px;
+  border-radius:8px;
 }
 
 .warning{
-background:#fff7e6;
-padding:12px;
-border-radius:8px;
-margin-top:10px;
+  background:#fff7e6;
+  border-left:5px solid #f39c12;
+  padding:12px;
+  border-radius:8px;
 }
 
 .error{
-background:#fdecec;
-padding:12px;
-border-radius:8px;
-margin-top:10px;
+  background:#fdecec;
+  border-left:5px solid #c0392b;
+  padding:12px;
+  border-radius:8px;
 }
 
-#gpsStatus{
-font-weight:bold;
+.link-box{
+  display:block;
+  background:#eef6ff;
+  border:1px solid #b8d8f5;
+  padding:12px;
+  border-radius:8px;
+  margin:8px 0;
+  word-break:break-word;
+}
+
+.link-box a{
+  color:#1769aa;
+  font-weight:bold;
 }
 
 @media(max-width:700px){
 
-.stats{
-grid-template-columns:repeat(2,1fr);
-}
+  .stats{
+    grid-template-columns:repeat(2,1fr);
+  }
 
-#map{
-height:430px;
-}
+  #map{
+    height:430px;
+  }
 
-header h1{
-font-size:20px;
+  header h1{
+    font-size:21px;
+  }
 }
-
-}
-
 </style>
 </head>
-
 
 <body>
 
 <header>
-
-<h1>🚌 TRANSPORTE ESCOLAR - LICEO TIUQUILEMU</h1>
-
-<p>
-Monitoreo y trazabilidad de recorridos en tiempo real
-</p>
-
+  <h1>🚌 TRANSPORTE ESCOLAR - LICEO TIUQUILEMU</h1>
+  <p>Monitoreo y trazabilidad de recorridos en tiempo real</p>
 </header>
-
 
 <main>
 
+<div class="card">
 
-<!-- =====================================================
-     SELECCIÓN
-===================================================== -->
+  <h2>🚐 Seleccione el recorrido</h2>
+
+  <select id="route">
+    <option value="">Seleccione...</option>
+    <option value="4">Recorrido N.º 4</option>
+    <option value="5">Recorrido N.º 5</option>
+    <option value="6">Recorrido N.º 6</option>
+    <option value="7">Recorrido N.º 7</option>
+    <option value="8">Recorrido N.º 8</option>
+    <option value="9">Recorrido N.º 9</option>
+    <option value="10">Recorrido N.º 10</option>
+  </select>
+
+  <div id="desc">
+    Seleccione un recorrido.
+  </div>
+
+  <button class="start" id="start">
+    ▶ Iniciar Recorrido
+  </button>
+
+  <button class="stop" id="stop" disabled>
+    ■ Finalizar Recorrido en Liceo
+  </button>
+
+</div>
+
 
 <div class="card">
 
-<h2>🚐 Seleccione el recorrido</h2>
+  <h2>📊 Información del viaje</h2>
 
-<select id="route">
+  <div class="stats">
 
-<option value="">
-Seleccione...
-</option>
+    <div class="stat">
+      Kilómetros
+      <b id="km">0,00 km</b>
+    </div>
 
-<option value="4">
-Recorrido N.º 4
-</option>
+    <div class="stat">
+      Inicio
+      <b id="ini">--:--</b>
+    </div>
 
-<option value="5">
-Recorrido N.º 5
-</option>
+    <div class="stat">
+      Llegada
+      <b id="fin">--:--</b>
+    </div>
 
-<option value="6">
-Recorrido N.º 6
-</option>
+    <div class="stat">
+      Duración
+      <b id="dur">--</b>
+    </div>
 
-<option value="7">
-Recorrido N.º 7
-</option>
+  </div>
 
-<option value="8">
-Recorrido N.º 8
-</option>
-
-<option value="9">
-Recorrido N.º 9
-</option>
-
-<option value="10">
-Recorrido N.º 10
-</option>
-
-</select>
-
-<div id="desc">
-Seleccione un recorrido.
-</div>
-
-
-<button
-id="start"
-class="start"
-type="button">
-▶ INICIAR RECORRIDO
-</button>
-
-
-<button
-id="stop"
-class="stop"
-type="button"
-disabled>
-■ FINALIZAR RECORRIDO EN LICEO
-</button>
+  <p id="status">
+    Esperando inicio del recorrido.
+  </p>
 
 </div>
 
-
-
-<!-- =====================================================
-     INFORMACIÓN
-===================================================== -->
 
 <div class="card">
 
-<h2>📊 Información del viaje</h2>
+  <h2>🗺️ Trayectoria GPS</h2>
 
-<div class="stats">
+  <p>
+    La línea representa el recorrido real registrado por GPS.
+  </p>
 
-<div class="stat">
-Kilómetros
-<b id="km">0,00 km</b>
-</div>
-
-<div class="stat">
-Inicio
-<b id="ini">--:--</b>
-</div>
-
-<div class="stat">
-Llegada
-<b id="fin">--:--</b>
-</div>
-
-<div class="stat">
-Duración
-<b id="dur">--</b>
-</div>
+  <div id="map"></div>
 
 </div>
 
-<p id="gpsStatus">
-⚪ GPS esperando inicio.
-</p>
-
-<div
-id="status"
-class="info">
-Esperando inicio del recorrido.
-</div>
-
-<div
-id="emailStatus"
-class="info"
-style="display:none">
-</div>
-
-</div>
-
-
-
-<!-- =====================================================
-     MAPA
-===================================================== -->
 
 <div class="card">
 
-<h2>🗺️ Trayectoria GPS</h2>
+  <h2>📍 Paradas detectadas</h2>
 
-<p>
-El mapa muestra la trayectoria real registrada por el GPS.
-Las paradas detectadas aparecerán numeradas.
-</p>
-
-<div id="map"></div>
+  <div id="stops">
+    Aún no se han detectado paradas.
+  </div>
 
 </div>
 
 
+<div class="card" id="summary" style="display:none">
 
-<!-- =====================================================
-     PARADAS
-===================================================== -->
+  <h2>✅ Recorrido finalizado</h2>
+
+  <div id="result"></div>
+
+  <div id="links"></div>
+
+  <button class="download" id="png">
+    🖼️ Descargar imagen con recorrido
+  </button>
+
+  <button class="download" id="pdf">
+    📄 Descargar PDF
+  </button>
+
+</div>
+
 
 <div class="card">
 
-<h2>📍 Paradas de estudiantes</h2>
+  <h2>📍 Recorridos oficiales</h2>
 
-<div id="stopsList">
-Aún no se ha iniciado el recorrido.
-</div>
+  <div id="routes"></div>
 
 </div>
-
-
-
-<!-- =====================================================
-     RESUMEN
-===================================================== -->
-
-<div
-class="card"
-id="summary"
-style="display:none">
-
-<h2>✅ Recorrido finalizado</h2>
-
-<div id="result"></div>
-
-<button
-id="png"
-class="download"
-type="button">
-🖼️ DESCARGAR IMAGEN DEL RECORRIDO
-</button>
-
-<button
-id="pdf"
-class="download"
-type="button">
-📄 DESCARGAR PDF
-</button>
-
-</div>
-
-
-
-<!-- =====================================================
-     RECORRIDOS
-===================================================== -->
-
-<div class="card">
-
-<h2>📍 Recorridos oficiales</h2>
-
-<div id="routes"></div>
-
-</div>
-
 
 </main>
 
 
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-<script
-src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
-</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
-<script
-src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js">
-</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
-<script
-src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js">
-</script>
-
-<script
-src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js">
-</script>
-
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 
 
 <script>
 
-/* =====================================================
-   EMAILJS
-===================================================== */
+document.addEventListener("DOMContentLoaded", function(){
 
-const EMAILJS_PUBLIC_KEY =
-'x6fcaIBg1FJ5g6gZt';
+/* =========================================================
+   CONFIGURACIÓN
+========================================================= */
 
-const EMAILJS_SERVICE =
-'service_vb2sbz2';
+const CONFIG = {
 
-const EMAILJS_TEMPLATE =
-'template_8qplt4g';
+  institucion:
+    "Liceo Tiuquilemu",
+
+  emailjsService:
+    "service_vb2sbz2",
+
+  emailjsTemplate:
+    "template_8qplt4g",
+
+  emailjsPublicKey:
+    "x6fcaIBg1FJ5g6gZt",
+
+  correoInformatica:
+    "informatica@liceotiuquilemu.cl",
+
+  correoInspectoria:
+    "inspectoria@liceotiuquilemu.cl",
+
+  cloudinaryCloudName:
+    "qat8cwzo",
+
+  cloudinaryUploadPreset:
+    "liceo_tiuquilemu_rutas",
+
+  /* Tiempo mínimo detenido para considerar una parada */
+  paradaMinimaSegundos:
+    45,
+
+  /* Velocidad máxima para considerar que está detenido */
+  velocidadParadaKmH:
+    3
+
+};
 
 
-let emailReady=false;
+/* =========================================================
+   RECORRIDOS
+========================================================= */
 
-try{
-
-emailjs.init({
-publicKey:EMAILJS_PUBLIC_KEY
-});
-
-emailReady=true;
-
-console.log(
-'EmailJS iniciado correctamente'
-);
-
-}catch(error){
-
-console.error(
-'Error iniciando EmailJS:',
-error
-);
-
-}
-
-
-
-/* =====================================================
-   RECORRIDOS OFICIALES
-===================================================== */
-
-const R={
+const R = {
 
 4:{
-c:'#e74c3c',
-s:[
-'San José Zemita',
-'Zemita',
-'El Carbón',
-'San Fernando',
-'Callejón La Esperanza',
-'Liceo Tiuquilemu'
-]
+  c:"#e74c3c",
+  s:[
+    "San José Zemita",
+    "Zemita",
+    "El Carbón",
+    "San Fernando",
+    "Callejón La Esperanza",
+    "Liceo Tiuquilemu"
+  ]
 },
 
 5:{
-c:'#3498db',
-s:[
-'Chacay Bajo',
-'Las Rosas',
-'Lo Mellado',
-'El Espinal',
-'Ñiquén Estación',
-'San Pedro de Ñiquén',
-'Liceo Tiuquilemu'
-]
+  c:"#3498db",
+  s:[
+    "Chacay Bajo",
+    "Las Rosas",
+    "Lo Mellado",
+    "El Espinal",
+    "Ñiquén Estación",
+    "San Pedro de Ñiquén",
+    "Liceo Tiuquilemu"
+  ]
 },
 
 6:{
-c:'#2ecc71',
-s:[
-'Agua Buena',
-'Montecillo',
-'Buli Oriente',
-'Llahuimávida',
-'Camino San Pedro',
-'Buli',
-'Tiuquilemu',
-'Liceo Tiuquilemu'
-]
+  c:"#2ecc71",
+  s:[
+    "Agua Buena",
+    "Montecillo",
+    "Buli Oriente",
+    "Llahuimávida",
+    "Camino San Pedro",
+    "Buli",
+    "Tiuquilemu",
+    "Liceo Tiuquilemu"
+  ]
 },
 
 7:{
-c:'#e67e22',
-s:[
-'Paque Norte',
-'San Gregorio',
-'Bucalemu',
-'Colvindo',
-'Cabreria',
-'Huenutil Centro',
-'Virguín',
-'Tiuquilemu Arriba',
-'Liceo Tiuquilemu'
-]
+  c:"#e67e22",
+  s:[
+    "Paque Norte",
+    "San Gregorio",
+    "Bucalemu",
+    "Colvindo",
+    "Cabreria",
+    "Huenutil Centro",
+    "Virguín",
+    "Tiuquilemu Arriba",
+    "Liceo Tiuquilemu"
+  ]
 },
 
 8:{
-c:'#9b59b6',
-s:[
-'La Gloria Arriba',
-'Camino Bajo El León',
-'La Gloria Centro',
-'Camino Las Torres',
-'La Gloria Abajo',
-'Liceo Tiuquilemu'
-]
+  c:"#9b59b6",
+  s:[
+    "La Gloria Arriba",
+    "Camino Bajo El León",
+    "La Gloria Centro",
+    "Camino Las Torres",
+    "La Gloria Abajo",
+    "Liceo Tiuquilemu"
+  ]
 },
 
 9:{
-c:'#f1c40f',
-s:[
-'La Pitrilla',
-'San Vicente',
-'Chacay',
-'Callejón Los Indios',
-'San Roque',
-'San Jorge',
-'Liceo Tiuquilemu'
-]
+  c:"#f1c40f",
+  s:[
+    "La Pitrilla",
+    "San Vicente",
+    "Chacay",
+    "Callejón Los Indios",
+    "San Roque",
+    "San Jorge",
+    "Liceo Tiuquilemu"
+  ]
 },
 
 10:{
-c:'#1abc9c',
-s:[
-'Maitenes',
-'Maitenes El Yugo',
-'Santa Josefina',
-'Liceo Tiuquilemu'
-]
+  c:"#1abc9c",
+  s:[
+    "Maitenes",
+    "Maitenes El Yugo",
+    "Santa Josefina",
+    "Liceo Tiuquilemu"
+  ]
 }
 
 };
 
 
-
-/* =====================================================
+/* =========================================================
    ELEMENTOS HTML
-===================================================== */
+========================================================= */
 
-const routeSelect =
-document.getElementById('route');
+const route =
+  document.getElementById("route");
 
 const desc =
-document.getElementById('desc');
+  document.getElementById("desc");
 
-const startButton =
-document.getElementById('start');
+const start =
+  document.getElementById("start");
 
-const stopButton =
-document.getElementById('stop');
+const stop =
+  document.getElementById("stop");
 
 const km =
-document.getElementById('km');
+  document.getElementById("km");
 
 const ini =
-document.getElementById('ini');
+  document.getElementById("ini");
 
 const fin =
-document.getElementById('fin');
+  document.getElementById("fin");
 
 const dur =
-document.getElementById('dur');
-
-const gpsStatus =
-document.getElementById('gpsStatus');
+  document.getElementById("dur");
 
 const status =
-document.getElementById('status');
-
-const emailStatus =
-document.getElementById('emailStatus');
-
-const summary =
-document.getElementById('summary');
-
-const result =
-document.getElementById('result');
-
-const stopsList =
-document.getElementById('stopsList');
+  document.getElementById("status");
 
 const routes =
-document.getElementById('routes');
+  document.getElementById("routes");
+
+const stopsBox =
+  document.getElementById("stops");
+
+const summary =
+  document.getElementById("summary");
+
+const result =
+  document.getElementById("result");
+
+const links =
+  document.getElementById("links");
+
+const png =
+  document.getElementById("png");
+
+const pdf =
+  document.getElementById("pdf");
 
 
+/* =========================================================
+   EMAILJS
+========================================================= */
 
-/* =====================================================
+try{
+
+  emailjs.init({
+    publicKey:CONFIG.emailjsPublicKey
+  });
+
+}catch(error){
+
+  console.error(
+    "Error inicializando EmailJS:",
+    error
+  );
+
+}
+
+
+/* =========================================================
    MAPA
-===================================================== */
+========================================================= */
 
 const map =
-L.map('map').setView(
-[-36.75,-72.15],
-13
-);
-
+  L.map("map").setView(
+    [-36.75,-72.15],
+    13
+  );
 
 L.tileLayer(
-'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-{
-maxZoom:19,
-attribution:'© OpenStreetMap'
-}
+  "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+  {
+    maxZoom:19,
+    attribution:"© OpenStreetMap"
+  }
 ).addTo(map);
 
 
+/* =========================================================
+   VARIABLES DEL RECORRIDO
+========================================================= */
 
-/* =====================================================
-   VARIABLES DEL VIAJE
-===================================================== */
+let watch = null;
 
-let gpsWatchId = null;
+let points = [];
 
-let viajeActivo = false;
+let last = null;
 
-let puntosGPS = [];
+let total = 0;
 
-let ultimoPunto = null;
+let startTime = null;
 
-let kilometros = 0;
+let endTime = null;
 
-let horaInicio = null;
+let line = null;
 
-let horaLlegada = null;
+let current = null;
 
-let linea = null;
+let begin = null;
 
-let marcadorVehiculo = null;
+let end = null;
 
-let marcadorInicio = null;
+let active = false;
 
-let marcadorLlegada = null;
+let stopsDetected = [];
 
-let paradas = [];
+let stoppedSince = null;
 
-let posibleParada = null;
+let stopCandidate = null;
 
-let siguienteParada = 0;
+let stopTimer = null;
 
+let imageURL = "";
 
+let pdfURL = "";
 
-/* =====================================================
-   CONFIGURACIÓN DETECCIÓN
-===================================================== */
-
-/*
-   El vehículo debe permanecer detenido
-   al menos 45 segundos.
-*/
-
-const TIEMPO_MINIMO_PARADA = 45;
+let lastRouteId = "";
 
 
-/*
-   Se considera detenido si el movimiento
-   es muy pequeño.
-*/
+/* =========================================================
+   DISTANCIA
+========================================================= */
 
-const DISTANCIA_MOVIMIENTO_PARADA = 25;
+function dist(lat1,lon1,lat2,lon2){
 
+  const Rm = 6371000;
 
-/*
-   Después de detectar una parada,
-   el vehículo debe alejarse para continuar.
-*/
+  const rad =
+    x => x * Math.PI / 180;
 
-const DISTANCIA_SALIDA_PARADA = 40;
+  const dLat =
+    rad(lat2-lat1);
 
+  const dLon =
+    rad(lon2-lon1);
 
+  const a =
+    Math.sin(dLat/2)**2 +
+    Math.cos(rad(lat1)) *
+    Math.cos(rad(lat2)) *
+    Math.sin(dLon/2)**2;
 
-/* =====================================================
-   DISTANCIA GPS
-===================================================== */
-
-function distanciaMetros(
-lat1,
-lon1,
-lat2,
-lon2
-){
-
-const radio=6371000;
-
-const rad=
-x=>x*Math.PI/180;
-
-const dLat=
-rad(lat2-lat1);
-
-const dLon=
-rad(lon2-lon1);
-
-const a=
-Math.sin(dLat/2)**2+
-Math.cos(rad(lat1))*
-Math.cos(rad(lat2))*
-Math.sin(dLon/2)**2;
-
-return 2*radio*
-Math.atan2(
-Math.sqrt(a),
-Math.sqrt(1-a)
-);
-
+  return 2 * Rm *
+    Math.atan2(
+      Math.sqrt(a),
+      Math.sqrt(1-a)
+    );
 }
 
 
-
-/* =====================================================
+/* =========================================================
    HORA
-===================================================== */
+========================================================= */
 
-function hora(d){
+function tm(d){
 
-return d.toLocaleTimeString(
-'es-CL',
-{
-hour:'2-digit',
-minute:'2-digit',
-second:'2-digit'
+  return d.toLocaleTimeString(
+    "es-CL",
+    {
+      hour:"2-digit",
+      minute:"2-digit",
+      second:"2-digit"
+    }
+  );
+
 }
-);
-
-}
 
 
-
-/* =====================================================
+/* =========================================================
    FECHA
-===================================================== */
+========================================================= */
 
 function fecha(d){
 
-return d.toLocaleDateString(
-'es-CL',
-{
-day:'2-digit',
-month:'2-digit',
-year:'numeric'
-}
-);
+  return d.toLocaleDateString(
+    "es-CL"
+  );
 
 }
 
 
-
-/* =====================================================
+/* =========================================================
    DURACIÓN
-===================================================== */
+========================================================= */
 
-function duracion(ms){
+function duration(ms){
 
-let segundos=
-Math.floor(ms/1000);
+  let s =
+    Math.floor(ms/1000);
 
-let horas=
-Math.floor(segundos/3600);
+  let h =
+    Math.floor(s/3600);
 
-segundos%=3600;
+  s %= 3600;
 
-let minutos=
-Math.floor(segundos/60);
+  let m =
+    Math.floor(s/60);
 
-segundos%=60;
+  s %= 60;
 
-if(horas){
+  if(h)
+    return h+" h "+m+" min";
 
-return horas+
-' h '+
-minutos+
-' min';
+  if(m)
+    return m+" min "+s+" s";
 
-}
-
-if(minutos){
-
-return minutos+
-' min '+
-segundos+
-' s';
-
-}
-
-return segundos+' s';
-
+  return s+" s";
 }
 
 
+/* =========================================================
+   VELOCIDAD
+========================================================= */
 
-/* =====================================================
-   CAMBIAR RECORRIDO
-===================================================== */
+function velocidadKmH(coords){
 
-routeSelect.addEventListener(
-'change',
-function(){
+  if(
+    typeof coords.speed === "number" &&
+    coords.speed >= 0
+  ){
 
-const id =
-routeSelect.value;
+    return coords.speed * 3.6;
 
-if(!id){
+  }
 
-desc.textContent=
-'Seleccione un recorrido.';
-
-return;
+  return 0;
 
 }
 
-desc.innerHTML=
-'<b>Recorrido N.º '+
-id+
-'</b><br>'+
-R[id].s.join(' ➜ ');
 
-});
+/* =========================================================
+   DESCRIPCIÓN DEL RECORRIDO
+========================================================= */
+
+function showDesc(){
+
+  const id =
+    route.value;
+
+  if(!id){
+
+    desc.innerHTML =
+      "Seleccione un recorrido.";
+
+    return;
+  }
+
+  desc.innerHTML =
+    "<b>Recorrido N.º "+id+
+    "</b><br>"+
+    R[id].s.join(" ➜ ");
+
+}
 
 
-
-/* =====================================================
-   LISTAR RECORRIDOS
-===================================================== */
+/* =========================================================
+   LISTA DE RECORRIDOS
+========================================================= */
 
 Object.entries(R).forEach(
-([id,r])=>{
+  ([id,r])=>{
 
-const div=
-document.createElement('div');
+    routes.innerHTML +=
+      `<div class="route"
+      style="border-color:${r.c}">
+      <b>Recorrido N.º ${id}</b><br>
+      ${r.s.join(" ➜ ")}
+      </div>`;
 
-div.className='route';
-
-div.style.borderColor=
-r.c;
-
-div.innerHTML=
-'<b>Recorrido N.º '+
-id+
-'</b><br>'+
-r.s.join(' ➜ ');
-
-routes.appendChild(div);
-
-});
-
-
-
-/* =====================================================
-   LIMPIAR MAPA
-===================================================== */
-
-function limpiarMapa(){
-
-if(linea){
-
-map.removeLayer(linea);
-
-linea=null;
-
-}
-
-if(marcadorVehiculo){
-
-map.removeLayer(
-marcadorVehiculo
-);
-
-marcadorVehiculo=null;
-
-}
-
-if(marcadorInicio){
-
-map.removeLayer(
-marcadorInicio
-);
-
-marcadorInicio=null;
-
-}
-
-if(marcadorLlegada){
-
-map.removeLayer(
-marcadorLlegada
-);
-
-marcadorLlegada=null;
-
-}
-
-}
-
-
-
-/* =====================================================
-   INICIAR RECORRIDO
-===================================================== */
-
-startButton.addEventListener(
-'click',
-function(){
-
-console.log(
-'BOTÓN INICIAR PRESIONADO'
+  }
 );
 
 
-const id =
-routeSelect.value;
+/* =========================================================
+   CAMBIO DE RECORRIDO
+========================================================= */
 
-
-if(!id){
-
-alert(
-'Primero seleccione un recorrido.'
+route.addEventListener(
+  "change",
+  showDesc
 );
 
-return;
+
+/* =========================================================
+   MOSTRAR PARADAS
+========================================================= */
+
+function mostrarParadas(){
+
+  if(!stopsDetected.length){
+
+    stopsBox.innerHTML =
+      "Aún no se han detectado paradas.";
+
+    return;
+  }
+
+  stopsBox.innerHTML =
+    stopsDetected.map(
+      (s,i)=>{
+
+        return `
+        <div class="stop-item">
+
+          <b>📍 Parada detectada ${i+1}</b><br>
+
+          🕐 Inicio:
+          ${tm(s.inicio)}
+
+          <br>
+
+          🕐 Fin:
+          ${tm(s.fin)}
+
+          <br>
+
+          ⏱️ Permanencia:
+          ${s.duracion}
+
+          <br>
+
+          📍 Coordenadas:
+          ${s.lat.toFixed(6)},
+          ${s.lng.toFixed(6)}
+
+        </div>
+        `;
+
+      }
+    ).join("");
 
 }
 
 
-if(!navigator.geolocation){
+/* =========================================================
+   CREAR MARCADOR DE PARADA
+========================================================= */
 
-alert(
-'Este dispositivo no tiene GPS disponible.'
-);
+function agregarMarcadorParada(parada){
 
-return;
+  const numero =
+    stopsDetected.length;
 
-}
-
-
-/*
-   Limpiar viaje anterior.
-*/
-
-if(gpsWatchId!==null){
-
-navigator.geolocation.clearWatch(
-gpsWatchId
-);
-
-gpsWatchId=null;
-
-}
-
-
-limpiarMapa();
-
-
-puntosGPS=[];
-
-ultimoPunto=null;
-
-kilometros=0;
-
-horaInicio=new Date();
-
-horaLlegada=null;
-
-paradas=[];
-
-posibleParada=null;
-
-siguienteParada=0;
-
-viajeActivo=true;
-
-
-linea=
-L.polyline(
-[],
-{
-color:R[id].c,
-weight:6,
-opacity:.9
-}
-).addTo(map);
-
-
-km.textContent=
-'0,00 km';
-
-ini.textContent=
-hora(horaInicio);
-
-fin.textContent=
-'--:--';
-
-dur.textContent=
-'--';
-
-
-summary.style.display=
-'none';
-
-
-emailStatus.style.display=
-'none';
-
-
-startButton.disabled=true;
-
-stopButton.disabled=false;
-
-
-gpsStatus.textContent=
-'🛰️ GPS ACTIVO';
-
-
-status.className=
-'info';
-
-status.textContent=
-'Buscando ubicación GPS y registrando trayectoria...';
-
-
-stopsList.innerHTML=
-'Esperando las primeras posiciones GPS...';
-
-
-/*
-   IMPORTANTE:
-   watchPosition se inicia aquí.
-*/
-
-gpsWatchId=
-navigator.geolocation.watchPosition(
-
-recibirGPS,
-
-errorGPS,
-
-{
-enableHighAccuracy:true,
-maximumAge:2000,
-timeout:20000
-}
-
-);
-
-
-});
-
-
-
-/* =====================================================
-   RECIBIR GPS
-===================================================== */
-
-function recibirGPS(position){
-
-if(!viajeActivo){
-
-return;
+  L.marker(
+    [parada.lat,parada.lng],
+    {
+      icon:L.divIcon({
+        className:"",
+        html:
+          `<div style="
+          background:#f39c12;
+          color:white;
+          width:30px;
+          height:30px;
+          border-radius:50%;
+          display:flex;
+          align-items:center;
+          justify-content:center;
+          font-weight:bold;
+          border:2px solid white;
+          box-shadow:0 1px 5px #555;">
+          ${numero}
+          </div>`,
+        iconSize:[30,30],
+        iconAnchor:[15,15]
+      })
+    }
+  )
+  .addTo(map)
+  .bindPopup(
+    "📍 Parada detectada "+
+    numero+
+    "<br>Hora: "+
+    tm(parada.inicio)
+  );
 
 }
 
 
-const lat =
-position.coords.latitude;
+/* =========================================================
+   FINALIZAR PARADA
+========================================================= */
 
-const lon =
-position.coords.longitude;
+function finalizarParada(){
 
-const precision =
-position.coords.accuracy;
+  if(!stopCandidate ||
+     !stoppedSince){
 
+    return;
 
-/*
-   Guardamos siempre la posición.
-*/
+  }
 
-puntosGPS.push([
-lat,
-lon
-]);
+  const ahora =
+    new Date();
 
+  const segundos =
+    (ahora-stoppedSince)/1000;
 
-/*
-   Calcular kilómetros.
-*/
+  if(
+    segundos <
+    CONFIG.paradaMinimaSegundos
+  ){
 
-if(ultimoPunto){
+    stopCandidate=null;
+    stoppedSince=null;
 
-const metros=
-distanciaMetros(
-ultimoPunto[0],
-ultimoPunto[1],
-lat,
-lon
-);
+    return;
+  }
 
+  const parada = {
 
-/*
-   Ignorar saltos GPS absurdos.
-*/
+    lat:
+      stopCandidate[0],
 
-if(metros>=3 && metros<500){
+    lng:
+      stopCandidate[1],
 
-kilometros +=
-metros/1000;
+    inicio:
+      stoppedSince,
 
-}
+    fin:
+      ahora,
 
-}
+    duracion:
+      duration(
+        ahora-stoppedSince
+      )
 
+  };
 
-ultimoPunto=[
-lat,
-lon
-];
+  stopsDetected.push(parada);
 
+  agregarMarcadorParada(
+    parada
+  );
 
-linea.setLatLngs(
-puntosGPS
-);
+  mostrarParadas();
 
+  stopCandidate=null;
 
-km.textContent=
-kilometros
-.toFixed(2)
-.replace('.',',')+
-' km';
-
-
-/*
-   Marcador de inicio.
-*/
-
-if(!marcadorInicio){
-
-marcadorInicio=
-L.marker(
-[lat,lon]
-).addTo(map);
-
-marcadorInicio.bindPopup(
-'🟢 Inicio del recorrido'
-);
+  stoppedSince=null;
 
 }
 
 
-/*
-   Marcador del furgón.
-*/
+/* =========================================================
+   PROCESAMIENTO GPS
+========================================================= */
 
-if(!marcadorVehiculo){
+function procesarGPS(pos){
 
-marcadorVehiculo=
-L.marker(
-[lat,lon]
-).addTo(map);
+  if(!active)
+    return;
 
-marcadorVehiculo.bindPopup(
-'🚐 Furgón escolar'
-);
+  const lat =
+    pos.coords.latitude;
 
-}else{
+  const lng =
+    pos.coords.longitude;
 
-marcadorVehiculo.setLatLng(
-[lat,lon]
-);
+  const ahora =
+    new Date();
+
+  const velocidad =
+    velocidadKmH(
+      pos.coords
+    );
+
+
+  /* -----------------------------------------
+     DISTANCIA
+  ----------------------------------------- */
+
+  if(last){
+
+    const d =
+      dist(
+        last[0],
+        last[1],
+        lat,
+        lng
+      );
+
+    /*
+      Evita sumar saltos GPS absurdos.
+    */
+
+    if(
+      d < 500
+    ){
+
+      total +=
+        d/1000;
+
+    }
+
+  }
+
+
+  last =
+    [lat,lng];
+
+
+  points.push(
+    [lat,lng]
+  );
+
+
+  if(line){
+
+    line.setLatLngs(
+      points
+    );
+
+  }
+
+
+  /* -----------------------------------------
+     MARCADOR INICIAL
+  ----------------------------------------- */
+
+  if(!begin){
+
+    begin =
+      L.marker(
+        [lat,lng]
+      )
+      .addTo(map)
+      .bindPopup(
+        "🟢 Inicio del recorrido"
+      );
+
+  }
+
+
+  /* -----------------------------------------
+     MARCADOR DEL FURGÓN
+  ----------------------------------------- */
+
+  if(!current){
+
+    current =
+      L.marker(
+        [lat,lng]
+      )
+      .addTo(map)
+      .bindPopup(
+        "🚐 Furgón escolar"
+      );
+
+  }else{
+
+    current.setLatLng(
+      [lat,lng]
+    );
+
+  }
+
+
+  /* -----------------------------------------
+     DETECCIÓN DE PARADA
+  ----------------------------------------- */
+
+  if(
+    velocidad <=
+    CONFIG.velocidadParadaKmH
+  ){
+
+    if(!stoppedSince){
+
+      stoppedSince =
+        ahora;
+
+      stopCandidate =
+        [lat,lng];
+
+    }
+
+  }else{
+
+    if(stoppedSince){
+
+      finalizarParada();
+
+    }
+
+  }
+
+
+  /* -----------------------------------------
+     ACTUALIZAR INFORMACIÓN
+  ----------------------------------------- */
+
+  km.textContent =
+    total.toFixed(2)
+    .replace(".",",")+
+    " km";
+
+  status.textContent =
+    "🛰️ GPS actualizado: "+
+    tm(ahora)+
+    " | Velocidad: "+
+    velocidad.toFixed(1)+
+    " km/h";
+
+
+  map.setView(
+    [lat,lng],
+    15
+  );
 
 }
 
 
-/*
-   Mostrar precisión.
-*/
-
-gpsStatus.textContent=
-'🛰️ GPS ACTIVO • Precisión: '+
-Math.round(precision)+
-' m';
-
-
-status.textContent=
-'GPS actualizado • '+
-hora(new Date())+
-' • '+
-kilometros.toFixed(2)+
-' km';
-
-
-/*
-   Detectar posible parada.
-*/
-
-detectarParada(
-lat,
-lon
-);
-
-
-map.setView(
-[lat,lon],
-15
-);
-
-}
-
-
-
-/* =====================================================
+/* =========================================================
    ERROR GPS
-===================================================== */
+========================================================= */
 
-function errorGPS(error){
+function errorGPS(e){
 
-console.error(
-'GPS:',
-error
+  let mensaje =
+    "Error GPS.";
+
+  if(e.code === 1){
+
+    mensaje =
+      "⚠️ Permiso de ubicación rechazado. Debe permitir la ubicación.";
+
+  }else if(e.code === 2){
+
+    mensaje =
+      "⚠️ Ubicación no disponible.";
+
+  }else if(e.code === 3){
+
+    mensaje =
+      "⚠️ Tiempo de espera del GPS.";
+
+  }
+
+  status.textContent =
+    mensaje;
+
+}
+
+
+/* =========================================================
+   INICIAR RECORRIDO
+========================================================= */
+
+start.addEventListener(
+  "click",
+  function(){
+
+    const id =
+      route.value;
+
+    if(!id){
+
+      alert(
+        "Seleccione un recorrido."
+      );
+
+      return;
+
+    }
+
+
+    if(!navigator.geolocation){
+
+      alert(
+        "Este dispositivo no permite GPS."
+      );
+
+      return;
+
+    }
+
+
+    /* -------------------------------------
+       LIMPIAR RECORRIDO ANTERIOR
+    ------------------------------------- */
+
+    points=[];
+
+    last=null;
+
+    total=0;
+
+    stopsDetected=[];
+
+    stoppedSince=null;
+
+    stopCandidate=null;
+
+    imageURL="";
+
+    pdfURL="";
+
+    active=true;
+
+    startTime =
+      new Date();
+
+    lastRouteId=id;
+
+
+    if(line)
+      map.removeLayer(line);
+
+    if(current)
+      map.removeLayer(current);
+
+    if(begin)
+      map.removeLayer(begin);
+
+    if(end)
+      map.removeLayer(end);
+
+
+    /* -------------------------------------
+       CREAR LÍNEA
+    ------------------------------------- */
+
+    line =
+      L.polyline(
+        [],
+        {
+          color:R[id].c,
+          weight:6,
+          opacity:.9
+        }
+      )
+      .addTo(map);
+
+
+    /* -------------------------------------
+       REINICIAR INTERFAZ
+    ------------------------------------- */
+
+    ini.textContent =
+      tm(startTime);
+
+    fin.textContent =
+      "--:--";
+
+    dur.textContent =
+      "--";
+
+    km.textContent =
+      "0,00 km";
+
+    status.textContent =
+      "🛰️ Activando GPS...";
+
+    stopsBox.innerHTML =
+      "Esperando detección de paradas...";
+
+    result.innerHTML="";
+
+    links.innerHTML="";
+
+    summary.style.display =
+      "none";
+
+    start.disabled=true;
+
+    stop.disabled=false;
+
+
+    /* -------------------------------------
+       GPS
+    ------------------------------------- */
+
+    watch =
+      navigator.geolocation.watchPosition(
+        procesarGPS,
+        errorGPS,
+        {
+          enableHighAccuracy:true,
+          maximumAge:2000,
+          timeout:15000
+        }
+      );
+
+  }
 );
 
 
-if(error.code===1){
-
-gpsStatus.textContent=
-'❌ GPS: permiso rechazado';
-
-status.className='error';
-
-status.textContent=
-'Debes permitir la ubicación GPS del navegador.';
-
-}
-
-else if(error.code===2){
-
-gpsStatus.textContent=
-'⚠️ GPS: ubicación no disponible';
-
-}
-
-else if(error.code===3){
-
-gpsStatus.textContent=
-'⚠️ GPS: tiempo de espera agotado';
-
-}
-
-else{
-
-gpsStatus.textContent=
-'⚠️ Error desconocido del GPS';
-
-}
-
-}
-
-
-
-/* =====================================================
-   DETECCIÓN DE PARADAS
-===================================================== */
-
-function detectarParada(
-lat,
-lon
-){
-
-if(!viajeActivo){
-
-return;
-
-}
-
-
-const id =
-routeSelect.value;
-
-
-/*
-   Último punto de cada recorrido
-   es el Liceo.
-
-   No se registra como parada
-   de estudiante.
-*/
-
-const cantidadParadas =
-R[id].s.length-1;
-
-
-/*
-   Ya detectamos todas las paradas.
-*/
-
-if(
-siguienteParada >=
-cantidadParadas
-){
-
-return;
-
-}
-
-
-const ahora =
-Date.now();
-
-
-/*
-   Si todavía no tenemos
-   una posible parada.
-*/
-
-if(!posibleParada){
-
-posibleParada={
-
-lat:lat,
-
-lon:lon,
-
-inicio:ahora
-
-};
-
-return;
-
-}
-
-
-/*
-   ¿Cuánto se movió desde
-   que comenzó la posible parada?
-*/
-
-const movimiento=
-distanciaMetros(
-posibleParada.lat,
-posibleParada.lon,
-lat,
-lon
-);
-
-
-/*
-   Si se alejó demasiado,
-   ya no estaba detenido.
-*/
-
-if(
-movimiento >
-DISTANCIA_MOVIMIENTO_PARADA
-){
-
-posibleParada=null;
-
-return;
-
-}
-
-
-/*
-   Tiempo detenido.
-*/
-
-const segundos=
-(ahora-posibleParada.inicio)/1000;
-
-
-/*
-   Todavía no cumple tiempo mínimo.
-*/
-
-if(
-segundos <
-TIEMPO_MINIMO_PARADA
-){
-
-status.textContent=
-'🛰️ Posible parada detectada. '+
-Math.round(
-TIEMPO_MINIMO_PARADA-segundos
-)+
-' segundos para confirmar...';
-
-return;
-
-}
-
-
-/*
-   CONFIRMAMOS LA PARADA.
-*/
-
-registrarParada(
-lat,
-lon
-);
-
-
-posibleParada=null;
-
-}
-
-
-
-/* =====================================================
-   REGISTRAR PARADA
-===================================================== */
-
-function registrarParada(
-lat,
-lon
-){
-
-const id =
-routeSelect.value;
-
-
-const cantidadParadas =
-R[id].s.length-1;
-
-
-if(
-siguienteParada >=
-cantidadParadas
-){
-
-return;
-
-}
-
-
-const nombre=
-R[id].s[
-siguienteParada
-];
-
-
-const nuevaParada={
-
-numero:
-siguienteParada+1,
-
-nombre:nombre,
-
-lat:lat,
-
-lon:lon,
-
-hora:new Date()
-
-};
-
-
-paradas.push(
-nuevaParada
-);
-
-
-siguienteParada++;
-
-
-/*
-   Marcador numerado.
-*/
-
-const icono=
-L.divIcon({
-
-className:'parada-icon',
-
-html:
-'<div style="' +
-'background:#8e44ad;' +
-'color:white;' +
-'width:34px;' +
-'height:34px;' +
-'border-radius:50%;' +
-'display:flex;' +
-'align-items:center;' +
-'justify-content:center;' +
-'font-weight:bold;' +
-'border:3px solid white;' +
-'box-shadow:0 2px 7px #0008;' +
-'">' +
-nuevaParada.numero+
-'</div>',
-
-iconSize:[
-34,
-34
-],
-
-iconAnchor:[
-17,
-17
-]
-
-});
-
-
-const marcador=
-L.marker(
-[lat,lon],
-{
-icon:icono
-}
-).addTo(map);
-
-
-marcador.bindPopup(
-
-'<b>📍 Parada '+
-nuevaParada.numero+
-'</b><br>'+
-nuevaParada.nombre+
-'<br>🕐 '+
-hora(nuevaParada.hora)+
-'<br>👨‍👩‍👧 Parada de estudiante'
-
-);
-
-
-actualizarParadas();
-
-
-status.className=
-'success';
-
-status.textContent=
-'📍 Parada '+
-nuevaParada.numero+
-' detectada: '+
-nombre+
-' • '+
-hora(nuevaParada.hora);
-
-}
-
-
-
-/* =====================================================
-   LISTA DE PARADAS
-===================================================== */
-
-function actualizarParadas(){
-
-if(paradas.length===0){
-
-stopsList.innerHTML=
-'No se han detectado paradas todavía.';
-
-return;
-
-}
-
-
-stopsList.innerHTML=
-paradas.map(
-p=>`
-
-<div class="stop">
-
-<b>
-📍 Parada ${p.numero} — ${p.nombre}
-</b>
-
-<br>
-
-🕐 Hora:
-${hora(p.hora)}
-
-<br>
-
-📌 Coordenadas:
-${p.lat.toFixed(6)},
-${p.lon.toFixed(6)}
-
-<br>
-
-👨‍👩‍👧 Parada de estudiante detectada automáticamente.
-
-</div>
-
-`
-).join('');
-
-}
-
-
-
-/* =====================================================
+/* =========================================================
    FINALIZAR RECORRIDO
-===================================================== */
+========================================================= */
 
-stopButton.addEventListener(
-'click',
-function(){
+stop.addEventListener(
+  "click",
+  async function(){
 
-console.log(
-'BOTÓN FINALIZAR PRESIONADO'
+    if(!active)
+      return;
+
+
+    /* -------------------------------------
+       DETENER GPS
+    ------------------------------------- */
+
+    if(watch !== null){
+
+      navigator.geolocation.clearWatch(
+        watch
+      );
+
+    }
+
+    watch=null;
+
+    active=false;
+
+    endTime =
+      new Date();
+
+
+    /* -------------------------------------
+       CERRAR PARADA ACTIVA
+    ------------------------------------- */
+
+    if(stoppedSince){
+
+      finalizarParada();
+
+    }
+
+
+    const id =
+      lastRouteId;
+
+
+    /* -------------------------------------
+       MARCAR LLEGADA
+    ------------------------------------- */
+
+    if(points.length){
+
+      const p =
+        points[
+          points.length-1
+        ];
+
+      end =
+        L.marker(p)
+        .addTo(map)
+        .bindPopup(
+          "🏫 Llegada al Liceo Tiuquilemu"
+        )
+        .openPopup();
+
+      if(line){
+
+        map.fitBounds(
+          line.getBounds(),
+          {
+            padding:[30,30]
+          }
+        );
+
+      }
+
+    }
+
+
+    /* -------------------------------------
+       DATOS
+    ------------------------------------- */
+
+    fin.textContent =
+      tm(endTime);
+
+    dur.textContent =
+      duration(
+        endTime-startTime
+      );
+
+    km.textContent =
+      total.toFixed(2)
+      .replace(".",",")+
+      " km";
+
+
+    status.textContent =
+      "⏳ Generando informe, imagen y enlaces...";
+
+
+    start.disabled=false;
+
+    stop.disabled=true;
+
+    summary.style.display=
+      "block";
+
+
+    result.innerHTML = `
+
+      <p>
+        <b>🏫 Institución:</b>
+        ${CONFIG.institucion}
+      </p>
+
+      <p>
+        <b>🚐 Recorrido:</b>
+        N.º ${id}
+      </p>
+
+      <p>
+        <b>📅 Fecha:</b>
+        ${fecha(startTime)}
+      </p>
+
+      <p>
+        <b>🛣️ Distancia GPS:</b>
+        ${total.toFixed(2).replace(".",",")} km
+      </p>
+
+      <p>
+        <b>🕐 Inicio:</b>
+        ${tm(startTime)}
+      </p>
+
+      <p>
+        <b>🏫 Llegada:</b>
+        ${tm(endTime)}
+      </p>
+
+      <p>
+        <b>⏱️ Duración:</b>
+        ${duration(endTime-startTime)}
+      </p>
+
+      <p>
+        <b>📍 Paradas detectadas:</b>
+        ${stopsDetected.length}
+      </p>
+
+      <p>
+        <b>🛰️ Puntos GPS:</b>
+        ${points.length}
+      </p>
+
+    `;
+
+
+    summary.scrollIntoView({
+      behavior:"smooth"
+    });
+
+
+    /* -------------------------------------
+       GENERAR IMAGEN
+    ------------------------------------- */
+
+    try{
+
+      status.textContent =
+        "🖼️ Generando imagen del recorrido...";
+
+      const canvas =
+        await html2canvas(
+          document.getElementById("map"),
+          {
+            useCORS:true,
+            allowTaint:false,
+            scale:2,
+            backgroundColor:"#ffffff"
+          }
+        );
+
+
+      /* -----------------------------------
+         DESCARGA LOCAL
+      ----------------------------------- */
+
+      const pngData =
+        canvas.toDataURL(
+          "image/png"
+        );
+
+
+      const nombreBase =
+        "Recorrido_"+
+        id+
+        "_"+
+        fecha(startTime)
+          .replace(/\//g,"-");
+
+
+      png.dataset.data =
+        pngData;
+
+      png.dataset.filename =
+        nombreBase+".png";
+
+
+      /* -----------------------------------
+         SUBIR IMAGEN A CLOUDINARY
+      ----------------------------------- */
+
+      status.textContent =
+        "☁️ Subiendo imagen del recorrido...";
+
+      imageURL =
+        await subirCloudinary(
+          pngData,
+          nombreBase,
+          "image"
+        );
+
+
+      /* -----------------------------------
+         GENERAR PDF
+      ----------------------------------- */
+
+      status.textContent =
+        "📄 Generando PDF...";
+
+      const pdfBlob =
+        await generarPDF(
+          canvas,
+          id
+        );
+
+
+      /* -----------------------------------
+         SUBIR PDF A CLOUDINARY
+      ----------------------------------- */
+
+      status.textContent =
+        "☁️ Subiendo PDF...";
+
+      pdfURL =
+        await subirCloudinary(
+          pdfBlob,
+          nombreBase,
+          "pdf"
+        );
+
+
+      /* -----------------------------------
+         MOSTRAR ENLACES
+      ----------------------------------- */
+
+      links.innerHTML = `
+
+        <div class="success">
+
+          <b>✅ Archivos generados correctamente</b>
+
+        </div>
+
+        <div class="link-box">
+
+          🗺️
+          <a href="${imageURL}"
+             target="_blank"
+             rel="noopener">
+             VER / DESCARGAR IMAGEN DEL RECORRIDO
+          </a>
+
+        </div>
+
+        <div class="link-box">
+
+          📄
+          <a href="${pdfURL}"
+             target="_blank"
+             rel="noopener">
+             VER / DESCARGAR HOJA DE RUTA PDF
+          </a>
+
+        </div>
+
+      `;
+
+
+      /* -----------------------------------
+         ENVIAR EMAIL
+      ----------------------------------- */
+
+      status.textContent =
+        "📧 Enviando hoja de ruta por correo...";
+
+
+      await enviarCorreo(
+        id,
+        imageURL,
+        pdfURL
+      );
+
+
+      status.innerHTML =
+        "✅ <b>Recorrido finalizado.</b> "+
+        "La hoja de ruta fue enviada a Informática e Inspectoría.";
+
+    }
+    catch(error){
+
+      console.error(error);
+
+      status.innerHTML =
+        "⚠️ El recorrido terminó, pero ocurrió "+
+        "un problema al generar o enviar los archivos. "+
+        "Puedes descargar la imagen y PDF manualmente.";
+
+      links.innerHTML += `
+
+        <div class="warning">
+
+          <b>Detalle:</b><br>
+          ${error.message || error}
+
+        </div>
+
+      `;
+
+    }
+
+  }
 );
 
 
-if(!viajeActivo){
+/* =========================================================
+   SUBIR ARCHIVO A CLOUDINARY
+========================================================= */
 
-return;
-
-}
-
-
-/*
-   Detener GPS.
-*/
-
-if(gpsWatchId!==null){
-
-navigator.geolocation.clearWatch(
-gpsWatchId
-);
-
-gpsWatchId=null;
-
-}
-
-
-viajeActivo=false;
-
-horaLlegada=
-new Date();
-
-
-const id =
-routeSelect.value;
-
-
-/*
-   Último punto disponible.
-*/
-
-if(
-puntosGPS.length>0
+async function subirCloudinary(
+  archivo,
+  nombre,
+  tipo
 ){
 
-const ultimo=
-puntosGPS[
-puntosGPS.length-1
-];
+  let endpoint =
+    "https://api.cloudinary.com/v1_1/"+
+    CONFIG.cloudinaryCloudName+
+    "/auto/upload";
 
 
-marcadorLlegada=
-L.marker(
-ultimo
-).addTo(map);
+  const form =
+    new FormData();
 
 
-marcadorLlegada.bindPopup(
-'🏫 Llegada al Liceo Tiuquilemu'
-).openPopup();
+  form.append(
+    "file",
+    archivo
+  );
 
 
-if(linea){
+  form.append(
+    "upload_preset",
+    CONFIG.cloudinaryUploadPreset
+  );
 
-map.fitBounds(
-linea.getBounds(),
-{
-padding:[
-30,
-30
-]
+
+  form.append(
+    "folder",
+    "liceo_tiuquilemu/recorridos"
+  );
+
+
+  form.append(
+    "public_id",
+    nombre+"_"+tipo
+  );
+
+
+  const response =
+    await fetch(
+      endpoint,
+      {
+        method:"POST",
+        body:form
+      }
+    );
+
+
+  if(!response.ok){
+
+    const texto =
+      await response.text();
+
+    throw new Error(
+      "Cloudinary rechazó la subida: "+
+      texto
+    );
+
+  }
+
+
+  const data =
+    await response.json();
+
+
+  if(!data.secure_url){
+
+    throw new Error(
+      "Cloudinary no devolvió una URL."
+    );
+
+  }
+
+
+  return data.secure_url;
+
 }
+
+
+/* =========================================================
+   GENERAR PDF
+========================================================= */
+
+async function generarPDF(
+  canvas,
+  id
+){
+
+  const {
+    jsPDF
+  } = window.jspdf;
+
+
+  const doc =
+    new jsPDF(
+      "p",
+      "mm",
+      "a4"
+    );
+
+
+  doc.setFontSize(18);
+
+  doc.text(
+    "Liceo Tiuquilemu",
+    20,
+    20
+  );
+
+
+  doc.setFontSize(13);
+
+  doc.text(
+    "Hoja de Ruta - Transporte Escolar",
+    20,
+    30
+  );
+
+
+  doc.setFontSize(10);
+
+  let y=42;
+
+
+  doc.text(
+    "Institución: "+
+    CONFIG.institucion,
+    20,
+    y
+  );
+
+  y+=7;
+
+
+  doc.text(
+    "Recorrido N.º "+
+    id,
+    20,
+    y
+  );
+
+  y+=7;
+
+
+  doc.text(
+    "Fecha: "+
+    fecha(startTime),
+    20,
+    y
+  );
+
+  y+=7;
+
+
+  doc.text(
+    "Inicio: "+
+    tm(startTime),
+    20,
+    y
+  );
+
+  y+=7;
+
+
+  doc.text(
+    "Llegada: "+
+    tm(endTime),
+    20,
+    y
+  );
+
+  y+=7;
+
+
+  doc.text(
+    "Duración: "+
+    duration(
+      endTime-startTime
+    ),
+    20,
+    y
+  );
+
+  y+=7;
+
+
+  doc.text(
+    "Distancia GPS: "+
+    total.toFixed(2)
+      .replace(".",",")+
+    " km",
+    20,
+    y
+  );
+
+  y+=7;
+
+
+  doc.text(
+    "Puntos GPS: "+
+    points.length,
+    20,
+    y
+  );
+
+  y+=7;
+
+
+  doc.text(
+    "Paradas detectadas: "+
+    stopsDetected.length,
+    20,
+    y
+  );
+
+
+  /* -------------------------------------
+     PARADAS
+  ------------------------------------- */
+
+  y+=12;
+
+  doc.setFontSize(12);
+
+  doc.text(
+    "Paradas detectadas",
+    20,
+    y
+  );
+
+  doc.setFontSize(9);
+
+  y+=7;
+
+
+  if(!stopsDetected.length){
+
+    doc.text(
+      "No se detectaron paradas.",
+      20,
+      y
+    );
+
+    y+=6;
+
+  }else{
+
+    stopsDetected.forEach(
+      (s,i)=>{
+
+        if(y>275){
+
+          doc.addPage();
+
+          y=20;
+
+        }
+
+
+        doc.text(
+          "Parada "+
+          (i+1)+
+          ": "+
+          tm(s.inicio)+
+          " - "+
+          tm(s.fin),
+          20,
+          y
+        );
+
+        y+=5;
+
+
+        doc.text(
+          "Coordenadas: "+
+          s.lat.toFixed(6)+
+          ", "+
+          s.lng.toFixed(6),
+          25,
+          y
+        );
+
+        y+=7;
+
+      }
+    );
+
+  }
+
+
+  /* -------------------------------------
+     IMAGEN DEL MAPA
+  ------------------------------------- */
+
+  if(y>170){
+
+    doc.addPage();
+
+    y=20;
+
+  }
+
+
+  doc.setFontSize(12);
+
+  doc.text(
+    "Trayectoria GPS",
+    20,
+    y
+  );
+
+  y+=7;
+
+
+  const img =
+    canvas.toDataURL(
+      "image/png"
+    );
+
+
+  const pageWidth =
+    170;
+
+  const imgHeight =
+    canvas.height *
+    pageWidth /
+    canvas.width;
+
+
+  doc.addImage(
+    img,
+    "PNG",
+    20,
+    y,
+    pageWidth,
+    imgHeight
+  );
+
+
+  /* -------------------------------------
+     GENERAR BLOB
+  ------------------------------------- */
+
+  return doc.output(
+    "blob"
+  );
+
+}
+
+
+/* =========================================================
+   ENVIAR CORREO EMAILJS
+========================================================= */
+
+async function enviarCorreo(
+  id,
+  imagen,
+  pdf
+){
+
+  const listaParadas =
+    stopsDetected.length
+    ?
+    stopsDetected
+      .map(
+        (s,i)=>
+          "Parada "+(i+1)+
+          " | Inicio: "+tm(s.inicio)+
+          " | Fin: "+tm(s.fin)+
+          " | Duración: "+s.duracion+
+          " | Coordenadas: "+
+          s.lat.toFixed(6)+
+          ", "+
+          s.lng.toFixed(6)
+      )
+      .join("\n")
+    :
+    "No se detectaron paradas.";
+
+
+  const parametros = {
+
+    institucion:
+      CONFIG.institucion,
+
+    recorrido:
+      "N.º "+id,
+
+    fecha:
+      fecha(startTime),
+
+    hora_inicio:
+      tm(startTime),
+
+    hora_llegada:
+      tm(endTime),
+
+    duracion:
+      duration(
+        endTime-startTime
+      ),
+
+    kilometros:
+      total.toFixed(2)
+        .replace(".",",")+
+      " km",
+
+    cantidad_paradas:
+      stopsDetected.length,
+
+    paradas:
+      listaParadas,
+
+    puntos_gps:
+      points.length,
+
+    enlace_ruta:
+      imagen,
+
+    enlace_pdf:
+      pdf,
+
+    estado:
+      "Recorrido finalizado correctamente.",
+
+    destinatarios:
+      CONFIG.correoInformatica+
+      " / "+
+      CONFIG.correoInspectoria
+
+  };
+
+
+  const response =
+    await emailjs.send(
+      CONFIG.emailjsService,
+      CONFIG.emailjsTemplate,
+      parametros
+    );
+
+
+  console.log(
+    "Correo enviado:",
+    response
+  );
+
+}
+
+
+/* =========================================================
+   BOTÓN DESCARGAR PNG
+========================================================= */
+
+png.addEventListener(
+  "click",
+  function(){
+
+    const data =
+      png.dataset.data;
+
+    const filename =
+      png.dataset.filename ||
+      "Recorrido_Liceo_Tiuquilemu.png";
+
+
+    if(!data){
+
+      alert(
+        "La imagen todavía no ha sido generada."
+      );
+
+      return;
+
+    }
+
+
+    const a =
+      document.createElement("a");
+
+    a.href=data;
+
+    a.download=filename;
+
+    document.body.appendChild(a);
+
+    a.click();
+
+    a.remove();
+
+  }
 );
 
-}
 
-}
+/* =========================================================
+   BOTÓN DESCARGAR PDF
+========================================================= */
+
+pdf.addEventListener(
+  "click",
+  async function(){
+
+    if(!points.length){
+
+      alert(
+        "No existe un recorrido terminado."
+      );
+
+      return;
+
+    }
 
 
-fin.textContent=
-hora(horaLlegada);
+    try{
 
-dur.textContent=
-duracion(
-horaLlegada-horaInicio
+      const canvas =
+        await html2canvas(
+          document.getElementById("map"),
+          {
+            useCORS:true,
+            scale:2,
+            backgroundColor:"#fff"
+          }
+        );
+
+
+      const blob =
+        await generarPDF(
+          canvas,
+          lastRouteId
+        );
+
+
+      const url =
+        URL.createObjectURL(blob);
+
+
+      const a =
+        document.createElement("a");
+
+      a.href=url;
+
+      a.download =
+        "Recorrido_"+
+        lastRouteId+
+        "_Liceo_Tiuquilemu.pdf";
+
+
+      document.body.appendChild(a);
+
+      a.click();
+
+      a.remove();
+
+
+      setTimeout(
+        ()=>{
+          URL.revokeObjectURL(url);
+        },
+        3000
+      );
+
+    }
+    catch(error){
+
+      console.error(error);
+
+      alert(
+        "No fue posible generar el PDF."
+      );
+
+    }
+
+  }
 );
 
-km.textContent=
-kilometros
-.toFixed(2)
-.replace('.',',')+
-' km';
 
+/* =========================================================
+   MENSAJE INICIAL
+========================================================= */
 
-startButton.disabled=false;
-
-stopButton.disabled=true;
-
-
-result.innerHTML=
-
-'<p><b>🚐 Recorrido:</b> N.º '+
-id+
-'</p>'+
-
-'<p><b>📅 Fecha:</b> '+
-fecha(horaInicio)+
-'</p>'+
-
-'<p><b>🕐 Inicio:</b> '+
-hora(horaInicio)+
-'</p>'+
-
-'<p><b>🏫 Llegada:</b> '+
-hora(horaLlegada)+
-'</p>'+
-
-'<p><b>⏱️ Duración:</b> '+
-duracion(
-horaLlegada-horaInicio
-)+
-'</p>'+
-
-'<p><b>🛣️ Kilómetros:</b> '+
-kilometros
-.toFixed(2)
-.replace('.',',')+
-' km</p>'+
-
-'<p><b>📍 Puntos GPS:</b> '+
-puntosGPS.length+
-'</p>'+
-
-'<p><b>🚏 Paradas:</b> '+
-paradas.length+
-'</p>';
-
-
-summary.style.display=
-'block';
-
-
-status.className=
-'info';
-
-status.textContent=
-'🏫 Llegada al Liceo registrada. Enviando reporte...';
-
-
-summary.scrollIntoView({
-behavior:'smooth'
-});
-
-
-/*
-   ENVIAR CORREO.
-*/
-
-enviarReporte();
-
-});
-
-
-
-/* =====================================================
-   PREPARAR DATOS DEL CORREO
-===================================================== */
-
-function crearDetalleParadas(){
-
-if(paradas.length===0){
-
-return 'No se detectaron paradas automáticamente.';
-
-}
-
-
-return paradas.map(
-p=>
-
-'Parada '+
-p.numero+
-' | '+
-p.nombre+
-' | Hora: '+
-hora(p.hora)+
-' | GPS: '+
-p.lat.toFixed(6)+
-', '+
-p.lon.toFixed(6)
-
-).join('\n');
-
-}
-
-
-
-/* =====================================================
-   PREPARAR RESUMEN GPS
-===================================================== */
-
-function crearResumenGPS(){
-
-if(puntosGPS.length===0){
-
-return 'Sin puntos GPS.';
-
-}
-
-
-const primero=
-puntosGPS[0];
-
-const ultimo=
-puntosGPS[
-puntosGPS.length-1
-];
-
-
-return(
-
-'Inicio GPS: '+
-primero[0].toFixed(6)+
-', '+
-primero[1].toFixed(6)+
-'\n'+
-
-'Llegada GPS: '+
-ultimo[0].toFixed(6)+
-', '+
-ultimo[1].toFixed(6)+
-'\n'+
-
-'Total puntos GPS: '+
-puntosGPS.length
-
-);
-
-}
-
-
-
-/* =====================================================
-   ENVIAR EMAIL
-===================================================== */
-
-async function enviarReporte(){
-
-emailStatus.style.display=
-'block';
-
-
-emailStatus.className=
-'info';
-
-
-emailStatus.textContent=
-'📧 Enviando hoja de ruta por correo...';
-
-
-if(!emailReady){
-
-emailStatus.className=
-'error';
-
-emailStatus.textContent=
-'❌ EmailJS no está disponible.';
-
-return;
-
-}
-
-
-const id =
-routeSelect.value;
-
-
-const detalleParadas=
-crearDetalleParadas();
-
-
-const resumenGPS=
-crearResumenGPS();
-
-
-const datos={
-
-recorrido:
-'Recorrido N.º '+id,
-
-fecha:
-fecha(horaInicio),
-
-hora_inicio:
-hora(horaInicio),
-
-hora_llegada:
-hora(horaLlegada),
-
-duracion:
-duracion(
-horaLlegada-horaInicio
-),
-
-kilometros:
-kilometros
-.toFixed(2)
-.replace('.',','),
-
-cantidad_paradas:
-paradas.length,
-
-cantidad_puntos_gps:
-puntosGPS.length,
-
-paradas:
-detalleParadas,
-
-resumen_gps:
-resumenGPS,
-
-ruta_oficial:
-R[id].s.join(
-' ➜ '
-),
-
-estado:
-'Recorrido finalizado en Liceo Tiuquilemu',
-
-institucion:
-'Liceo Tiuquilemu'
-
-};
-
+showDesc();
 
 console.log(
-'Datos enviados a EmailJS:',
-datos
+  "Sistema Transporte Escolar Liceo Tiuquilemu cargado correctamente."
 );
-
-
-try{
-
-const respuesta=
-await emailjs.send(
-EMAILJS_SERVICE,
-EMAILJS_TEMPLATE,
-datos
-);
-
-
-console.log(
-'EmailJS:',
-respuesta
-);
-
-
-emailStatus.className=
-'success';
-
-emailStatus.textContent=
-'✅ Hoja de ruta enviada correctamente a los correos configurados en EmailJS.';
-
-
-status.className=
-'success';
-
-status.textContent=
-'✅ Recorrido finalizado y reporte enviado correctamente.';
-
-
-}catch(error){
-
-console.error(
-'ERROR EMAILJS:',
-error
-);
-
-
-emailStatus.className=
-'error';
-
-emailStatus.innerHTML=
-
-'<b>⚠️ El recorrido terminó, pero el correo no pudo enviarse.</b>'+
-'<br><br>'+
-'Revisa la configuración de EmailJS y la plantilla.';
-
-
-status.className=
-'warning';
-
-status.textContent=
-'⚠️ Recorrido finalizado. El envío del correo presentó un problema.';
-
-}
-
-}
-
-
-
-/* =====================================================
-   DESCARGAR PNG
-===================================================== */
-
-document.getElementById(
-'png'
-).addEventListener(
-'click',
-async function(){
-
-if(!puntosGPS.length){
-
-alert(
-'No hay un recorrido registrado.'
-);
-
-return;
-
-}
-
-
-try{
-
-const canvas=
-await html2canvas(
-document.getElementById('map'),
-{
-useCORS:true,
-allowTaint:true,
-scale:2,
-backgroundColor:'#ffffff'
-}
-);
-
-
-const enlace=
-document.createElement('a');
-
-
-enlace.download=
-'Recorrido_'+
-routeSelect.value+
-'_Liceo_Tiuquilemu.png';
-
-
-enlace.href=
-canvas.toDataURL(
-'image/png'
-);
-
-
-enlace.click();
-
-
-}catch(error){
-
-console.error(error);
-
-alert(
-'No se pudo generar la imagen.'
-);
-
-}
 
 });
-
-
-
-/* =====================================================
-   DESCARGAR PDF
-===================================================== */
-
-document.getElementById(
-'pdf'
-).addEventListener(
-'click',
-async function(){
-
-if(!puntosGPS.length){
-
-alert(
-'No hay un recorrido registrado.'
-);
-
-return;
-
-}
-
-
-try{
-
-const canvas=
-await html2canvas(
-document.getElementById('map'),
-{
-useCORS:true,
-allowTaint:true,
-scale:2,
-backgroundColor:'#ffffff'
-}
-);
-
-
-const {jsPDF}=
-window.jspdf;
-
-
-const pdf=
-new jsPDF(
-'p',
-'mm',
-'a4'
-);
-
-
-const id=
-routeSelect.value;
-
-
-pdf.setFontSize(18);
-
-pdf.text(
-'Liceo Tiuquilemu',
-20,
-20
-);
-
-
-pdf.setFontSize(12);
-
-pdf.text(
-'Hoja de Ruta - Transporte Escolar',
-20,
-30
-);
-
-
-pdf.setFontSize(10);
-
-pdf.text(
-'Recorrido N.º '+id,
-20,
-40
-);
-
-pdf.text(
-'Fecha: '+fecha(horaInicio),
-20,
-47
-);
-
-pdf.text(
-'Inicio: '+hora(horaInicio),
-20,
-54
-);
-
-pdf.text(
-'Llegada: '+hora(horaLlegada),
-20,
-61
-);
-
-pdf.text(
-'Duración: '+
-duracion(
-horaLlegada-horaInicio
-),
-20,
-68
-);
-
-pdf.text(
-'Kilómetros: '+
-kilometros
-.toFixed(2)
-.replace('.',',')+
-' km',
-20,
-75
-);
-
-pdf.text(
-'Paradas detectadas: '+
-paradas.length,
-20,
-82
-);
-
-
-const imagen=
-canvas.toDataURL(
-'image/png'
-);
-
-
-const ancho=170;
-
-const alto=
-canvas.height*
-ancho/
-canvas.width;
-
-
-pdf.addImage(
-imagen,
-'PNG',
-20,
-90,
-ancho,
-alto
-);
-
-
-let y=
-90+
-alto+
-10;
-
-
-if(y>270){
-
-pdf.addPage();
-
-y=20;
-
-}
-
-
-pdf.setFontSize(12);
-
-pdf.text(
-'Paradas de estudiantes',
-20,
-y
-);
-
-y+=8;
-
-pdf.setFontSize(9);
-
-
-if(paradas.length===0){
-
-pdf.text(
-'No se detectaron paradas.',
-20,
-y
-);
-
-}else{
-
-paradas.forEach(
-p=>{
-
-if(y>280){
-
-pdf.addPage();
-
-y=20;
-
-}
-
-pdf.text(
-'Parada '+
-p.numero+
-': '+
-p.nombre+
-' - '+
-hora(p.hora),
-20,
-y
-);
-
-y+=6;
-
-pdf.text(
-'GPS: '+
-p.lat.toFixed(6)+
-', '+
-p.lon.toFixed(6),
-20,
-y
-);
-
-y+=7;
-
-});
-
-}
-
-
-pdf.save(
-'Recorrido_'+
-id+
-'_Liceo_Tiuquilemu.pdf'
-);
-
-
-}catch(error){
-
-console.error(error);
-
-alert(
-'No se pudo generar el PDF.'
-);
-
-}
-
-});
-
-
-
-/* =====================================================
-   ESTADO INICIAL
-===================================================== */
-
-desc.textContent=
-'Seleccione un recorrido.';
-
-gpsStatus.textContent=
-'⚪ GPS esperando inicio.';
-
-
-console.log(
-'Sistema Transporte Escolar cargado correctamente.'
-);
-
 </script>
 
 </body>
 </html>
-```
