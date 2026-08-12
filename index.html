@@ -1771,35 +1771,114 @@ El reporte fue enviado mediante EmailJS.
 `;
 
 
-}
 catch(error){
 
-console.error(
-"ERROR FINAL:",
-error
-);
+    console.error(
+        "================================="
+    );
+
+    console.error(
+        "ERROR COMPLETO DEL RECORRIDO"
+    );
+
+    console.error(
+        "================================="
+    );
+
+    console.error(error);
 
 
-status.innerHTML=
-`
+    let mensajeError = "";
 
-<div class="error">
 
-<b>
-⚠️ El recorrido terminó.
-</b>
+    if(error){
 
-<br><br>
+        if(error.text){
 
-Pero hubo un problema generando o enviando los archivos.
+            mensajeError +=
+                "<b>Texto:</b> " +
+                error.text +
+                "<br><br>";
 
-<br><br>
+        }
 
-${error.message || error}
 
-</div>
+        if(error.status){
 
-`;
+            mensajeError +=
+                "<b>Código:</b> " +
+                error.status +
+                "<br><br>";
+
+        }
+
+
+        if(error.message){
+
+            mensajeError +=
+                "<b>Mensaje:</b> " +
+                error.message +
+                "<br><br>";
+
+        }
+
+
+        if(typeof error === "object"){
+
+            try{
+
+                mensajeError +=
+                    "<b>Detalle técnico:</b><br>" +
+                    "<pre style='white-space:pre-wrap'>" +
+                    JSON.stringify(
+                        error,
+                        null,
+                        2
+                    ) +
+                    "</pre>";
+
+            }
+            catch(e){
+
+                mensajeError +=
+                    "No fue posible interpretar el error.";
+
+            }
+
+        }
+
+    }
+    else{
+
+        mensajeError =
+            "Error desconocido.";
+
+    }
+
+
+    status.innerHTML =
+    `
+
+    <div class="error">
+
+        <b>
+        ⚠️ El recorrido terminó,
+        pero ocurrió un problema.
+        </b>
+
+        <br><br>
+
+        ${mensajeError}
+
+        <br>
+
+        <b>
+        Revisa también la configuración de EmailJS.
+        </b>
+
+    </div>
+
+    `;
 
 }
 
