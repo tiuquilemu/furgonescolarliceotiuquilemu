@@ -1,16 +1,26 @@
+```html
 <!doctype html>
 <html lang="es">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
 
-<title>Transporte Escolar - Liceo Tiuquilemu</title>
+<head>
+
+<meta charset="utf-8">
+
+<meta name="viewport"
+content="width=device-width,initial-scale=1">
+
+<title>
+Transporte Escolar - Liceo Tiuquilemu
+</title>
 
 <link rel="stylesheet"
 href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 
 <style>
-*{box-sizing:border-box}
+
+*{
+box-sizing:border-box
+}
 
 body{
 margin:0;
@@ -40,7 +50,8 @@ border-radius:12px;
 box-shadow:0 2px 10px #0001
 }
 
-select,button{
+select,
+button{
 width:100%;
 padding:12px;
 margin:6px 0;
@@ -61,9 +72,17 @@ opacity:.5;
 cursor:not-allowed
 }
 
-.start{background:#16803c}
-.stop{background:#c0392b}
-.download{background:#1769aa}
+.start{
+background:#16803c
+}
+
+.stop{
+background:#c0392b
+}
+
+.download{
+background:#1769aa
+}
 
 #map{
 height:520px;
@@ -139,6 +158,11 @@ color:#1769aa;
 font-weight:bold
 }
 
+.email-status{
+margin-top:10px;
+font-weight:bold
+}
+
 @media(max-width:700px){
 
 .stats{
@@ -150,14 +174,20 @@ height:430px
 }
 
 }
+
 </style>
+
 </head>
+
 
 <body>
 
+
 <header>
 
-<h1>🚌 TRANSPORTE ESCOLAR - LICEO TIUQUILEMU</h1>
+<h1>
+🚌 TRANSPORTE ESCOLAR - LICEO TIUQUILEMU
+</h1>
 
 <p>
 Monitoreo y trazabilidad de recorridos en tiempo real
@@ -171,7 +201,9 @@ Monitoreo y trazabilidad de recorridos en tiempo real
 
 <div class="card">
 
-<h2>🚐 Seleccione el recorrido</h2>
+<h2>
+🚐 Seleccione el recorrido
+</h2>
 
 <select id="route">
 
@@ -381,13 +413,26 @@ id="pdf">
 </main>
 
 
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script
+src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
+</script>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script
+src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js">
+</script>
+
+
+<script
+src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js">
+</script>
+
+
+<script
+src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js">
+</script>
+
 
 
 <script>
@@ -656,6 +701,8 @@ let pdfURL="";
 
 let lastRouteId="";
 
+let lastCanvas=null;
+
 
 
 /* ======================================================
@@ -695,6 +742,7 @@ Math.sqrt(1-a)
 }
 
 
+
 function tm(d){
 
 return d.toLocaleTimeString(
@@ -709,6 +757,7 @@ second:"2-digit"
 }
 
 
+
 function fecha(d){
 
 return d.toLocaleDateString(
@@ -716,6 +765,7 @@ return d.toLocaleDateString(
 );
 
 }
+
 
 
 function duration(ms){
@@ -742,6 +792,7 @@ return m+" min "+s+" s";
 return s+" s";
 
 }
+
 
 
 function velocidadKmH(coords){
@@ -795,7 +846,7 @@ showDesc
 
 
 /* ======================================================
-LISTA DE RECORRIDOS
+LISTA RECORRIDOS
 ====================================================== */
 
 Object.entries(R)
@@ -1271,6 +1322,8 @@ imageURL="";
 
 pdfURL="";
 
+lastCanvas=null;
+
 active=true;
 
 startTime=
@@ -1324,6 +1377,8 @@ stopsBox.innerHTML=
 
 summary.style.display=
 "none";
+
+links.innerHTML="";
 
 start.disabled=true;
 
@@ -1536,8 +1591,12 @@ GENERAR ARCHIVOS
 try{
 
 
+/* ====================================================
+IMAGEN
+==================================================== */
+
 status.textContent=
-"🖼️ Generando imagen...";
+"🖼️ Generando imagen de la ruta...";
 
 
 const canvas=
@@ -1552,6 +1611,9 @@ backgroundColor:"#ffffff"
 );
 
 
+lastCanvas=canvas;
+
+
 const pngData=
 canvas.toDataURL(
 "image/png"
@@ -1561,8 +1623,7 @@ canvas.toDataURL(
 const nombre=
 "Recorrido_"+
 lastRouteId+
-"_"+
-fecha(startTime)
+"_"+fecha(startTime)
 .replace(/\//g,"-");
 
 
@@ -1573,7 +1634,9 @@ png.dataset.filename=
 nombre+".png";
 
 
-/* SUBIR IMAGEN */
+/* ====================================================
+SUBIR IMAGEN CLOUDINARY
+==================================================== */
 
 status.textContent=
 "☁️ Subiendo imagen a Cloudinary...";
@@ -1587,7 +1650,9 @@ nombre,
 );
 
 
-/* PDF */
+/* ====================================================
+GENERAR PDF
+==================================================== */
 
 status.textContent=
 "📄 Generando PDF...";
@@ -1599,7 +1664,9 @@ canvas
 );
 
 
-/* SUBIR PDF */
+/* ====================================================
+SUBIR PDF
+==================================================== */
 
 status.textContent=
 "☁️ Subiendo PDF a Cloudinary...";
@@ -1613,7 +1680,9 @@ nombre,
 );
 
 
-/* ENLACES */
+/* ====================================================
+ENLACES
+==================================================== */
 
 links.innerHTML=
 `
@@ -1666,7 +1735,7 @@ ENVIAR CORREO
 ==================================================== */
 
 status.textContent=
-"📧 Enviando hoja de ruta...";
+"📧 Enviando hoja de ruta e imagen de la ruta...";
 
 
 await enviarCorreo();
@@ -1678,6 +1747,7 @@ status.innerHTML=
 <div class="success">
 
 ✅
+
 <b>
 Hoja de ruta enviada correctamente.
 </b>
@@ -1685,7 +1755,16 @@ Hoja de ruta enviada correctamente.
 <br><br>
 
 📧
-Informática e Inspectoría recibieron el reporte.
+
+El reporte fue enviado mediante EmailJS.
+
+<br><br>
+
+🗺️ Imagen de la ruta incluida como archivo adjunto.
+
+<br><br>
+
+📄 Hoja de ruta PDF disponible mediante enlace.
 
 </div>
 
@@ -2034,12 +2113,15 @@ return doc.output(
 
 
 /* ======================================================
-CORREO EMAILJS
+EMAILJS
 ====================================================== */
 
 async function enviarCorreo(){
 
-/* DETALLE PARADAS */
+
+/* ====================================================
+DETALLE PARADAS
+==================================================== */
 
 let detalleParadas="";
 
@@ -2053,7 +2135,8 @@ stopsDetected
 
 return (
 
-"Parada "+(i+1)+
+"Parada "+
+(i+1)+
 " | Inicio: "+
 tm(s.inicio)+
 " | Fin: "+
@@ -2079,8 +2162,23 @@ detalleParadas=
 }
 
 
+
 /* ====================================================
-PARÁMETROS QUE SE ENVÍAN A EMAILJS
+NOMBRE DE IMAGEN
+==================================================== */
+
+const nombreImagen=
+
+"Recorrido_"+
+lastRouteId+
+"_"+fecha(startTime)
+.replace(/\//g,"-")+
+".png";
+
+
+
+/* ====================================================
+PARÁMETROS EMAILJS
 ==================================================== */
 
 const parametros={
@@ -2131,14 +2229,22 @@ enlace_pdf:
 pdfURL,
 
 estado:
-"Recorrido finalizado correctamente."
+"Recorrido finalizado correctamente.",
+
+
+/* =================================================
+IMAGEN PARA EMAILJS
+================================================= */
+
+ruta_imagen:
+png.dataset.data,
+
+nombre_imagen:
+nombreImagen
 
 };
 
 
-/* ====================================================
-MOSTRAR EN CONSOLA PARA COMPROBAR
-==================================================== */
 
 console.log(
 "DATOS ENVIADOS A EMAILJS:",
@@ -2146,8 +2252,9 @@ parametros
 );
 
 
+
 /* ====================================================
-ENVIAR
+ENVÍO
 ==================================================== */
 
 const response=
@@ -2246,7 +2353,9 @@ return;
 
 try{
 
+
 const canvas=
+lastCanvas ||
 await html2canvas(
 document.getElementById("map"),
 {
@@ -2295,7 +2404,8 @@ URL.revokeObjectURL(url);
 );
 
 
-}catch(error){
+}
+catch(error){
 
 console.error(error);
 
@@ -2306,6 +2416,7 @@ alert(
 }
 
 });
+
 
 
 /* ======================================================
@@ -2321,7 +2432,11 @@ console.log(
 
 
 });
+
 </script>
 
 </body>
+
 </html>
+```
+
